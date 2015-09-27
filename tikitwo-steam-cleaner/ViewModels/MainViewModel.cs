@@ -1,4 +1,6 @@
-﻿namespace tikitwo_steam_cleaner.UWP.ViewModels
+﻿using Prism.Mvvm;
+
+namespace tikitwo_steam_cleaner.UAP.ViewModels
 {
-    public class MainViewModel {}
+    public class MainViewModel : BindableBase {}
 }

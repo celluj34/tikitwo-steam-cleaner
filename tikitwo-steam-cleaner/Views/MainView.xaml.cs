@@ -1,4 +1,4 @@
-﻿namespace tikitwo_steam_cleaner.UWP.Views
+﻿namespace tikitwo_steam_cleaner.UAP.Views
 {
     public sealed partial class MainPage
     {

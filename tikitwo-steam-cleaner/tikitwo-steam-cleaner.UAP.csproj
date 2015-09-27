@@ -7,8 +7,8 @@
     <ProjectGuid>{7B88CEB1-3497-4ADC-B36F-1D88D5CE6F2F}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>tikitwo_steam_cleaner.UWP</RootNamespace>
-    <AssemblyName>tikitwo-steam-cleaner.UWP</AssemblyName>
+    <RootNamespace>tikitwo_steam_cleaner.UAP</RootNamespace>
+    <AssemblyName>tikitwo-steam-cleaner.UAP</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion>10.0.10240.0</TargetPlatformVersion>
@@ -132,6 +132,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

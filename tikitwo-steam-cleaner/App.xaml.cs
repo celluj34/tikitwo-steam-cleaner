@@ -5,8 +5,9 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Microsoft.ApplicationInsights;
+using tikitwo_steam_cleaner.UAP.Views;
 
-namespace tikitwo_steam_cleaner.UWP
+namespace tikitwo_steam_cleaner.UAP
 {
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
@@ -56,7 +57,7 @@ namespace tikitwo_steam_cleaner.UWP
                 // When the navigation stack isn't restored navigate to the first page,
                 // configuring the new page by passing required information as a navigation
                 // parameter
-                rootFrame.Navigate(typeof(Views.MainPage), e.Arguments);
+                rootFrame.Navigate(typeof(MainPage), e.Arguments);
             }
 
             // Ensure the current window is active
