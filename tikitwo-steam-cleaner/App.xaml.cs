@@ -30,6 +30,8 @@ namespace tikitwo_steam_cleaner.UAP
         /// <param name="e">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
+            Di.ConfigureContainer();
+
             var rootFrame = Window.Current.Content as Frame;
 
             // Do not repeat app initialization when the Window already has content,
