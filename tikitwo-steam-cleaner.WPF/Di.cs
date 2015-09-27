@@ -1,6 +1,6 @@
 ﻿using Autofac;
 
-namespace tikitwo_steam_cleaner.UAP
+namespace tikitwo_steam_cleaner.WPF
 {
     internal class Di
     {
