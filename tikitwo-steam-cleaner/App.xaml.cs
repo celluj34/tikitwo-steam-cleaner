@@ -4,7 +4,6 @@ using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using Microsoft.ApplicationInsights;
 using tikitwo_steam_cleaner.UAP.Views;
 
 namespace tikitwo_steam_cleaner.UAP
@@ -20,7 +19,6 @@ namespace tikitwo_steam_cleaner.UAP
         /// </summary>
         public App()
         {
-            WindowsAppInitializer.InitializeAsync(WindowsCollectors.Metadata | WindowsCollectors.Session);
             InitializeComponent();
             Suspending += OnSuspending;
         }
