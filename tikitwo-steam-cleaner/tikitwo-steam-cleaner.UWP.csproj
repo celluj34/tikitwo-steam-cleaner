@@ -7,8 +7,8 @@
     <ProjectGuid>{7B88CEB1-3497-4ADC-B36F-1D88D5CE6F2F}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>tikitwo_steam_cleaner</RootNamespace>
-    <AssemblyName>tikitwo-steam-cleaner</AssemblyName>
+    <RootNamespace>tikitwo_steam_cleaner.UWP</RootNamespace>
+    <AssemblyName>tikitwo-steam-cleaner.UWP</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion>10.0.10240.0</TargetPlatformVersion>
@@ -75,6 +75,8 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
+    <UseDotNetNativeToolchain>false</UseDotNetNativeToolchain>
+    <EnableGatekeeperAnalysis>false</EnableGatekeeperAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
