@@ -1,8 +1,11 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Prism.Commands;
 using Prism.Mvvm;
 using tikitwo_steam_cleaner.Application.Services;
+using tikitwo_steam_cleaner.WPF.Models;
 
 namespace tikitwo_steam_cleaner.WPF.ViewModels
 {
@@ -18,11 +21,13 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
 
             FindSteamFolder = new DelegateCommand(FindSteamFolderExecute, CanFindSteamFolder);
             AddFolder = new DelegateCommand(AddFolderExecute, CanAddFolder);
-            RemoveCustomFolder = new DelegateCommand(RemoveCustomFolderExecute, CanRemoveCustomFolder);
+            RemoveFolder = new DelegateCommand(RemoveFolderExecute, CanRemoveFolder);
             Search = new DelegateCommand(SearchExecute, CanSearch);
+            DeletePackages = new DelegateCommand(DeletePackagesExecute, CanDeletePackages);
 
             CanUseControls = true;
             FoldersToSearch = new ObservableCollection<string>();
+            FoldersToDelete = new ObservableCollection<FolderThing>();
         }
 
         #region Private Backing Fields
@@ -31,7 +36,7 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
         #endregion
 
         #region Public Properties
-        public bool CanUseControls
+        private bool CanUseControls
         {
             get {return _canUseControls;}
             set
@@ -42,8 +47,6 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
                 }
             }
         }
-
-        public ObservableCollection<string> FoldersToSearch {get;set;}
 
         public string SelectedFolder
         {
@@ -56,6 +59,9 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
                 }
             }
         }
+
+        public ObservableCollection<string> FoldersToSearch {get;set;}
+        public ObservableCollection<FolderThing> FoldersToDelete {get;set;}
         #endregion
 
         #region Helper Methods
@@ -63,8 +69,9 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
         {
             FindSteamFolder.RaiseCanExecuteChanged();
             AddFolder.RaiseCanExecuteChanged();
-            RemoveCustomFolder.RaiseCanExecuteChanged();
+            RemoveFolder.RaiseCanExecuteChanged();
             Search.RaiseCanExecuteChanged();
+            DeletePackages.RaiseCanExecuteChanged();
         }
 
         private void AddFolderToDisplay(string newFolder)
@@ -114,15 +121,15 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
         }
         #endregion
 
-        #region Remove Custom Folder
-        public DelegateCommand RemoveCustomFolder {get;}
+        #region Remove Folder
+        public DelegateCommand RemoveFolder {get;}
 
-        private void RemoveCustomFolderExecute()
+        private void RemoveFolderExecute()
         {
             FoldersToSearch.Remove(SelectedFolder);
         }
 
-        private bool CanRemoveCustomFolder()
+        private bool CanRemoveFolder()
         {
             return CanUseControls && FoldersToSearch.Any() && SelectedFolder != null;
         }
@@ -131,14 +138,42 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
         #region Search
         public DelegateCommand Search {get;}
 
-        private void SearchExecute()
+        private async void SearchExecute()
         {
-            CanUseControls = false;
+            await Task.Run(() =>
+            {
+                System.Windows.Application.Current.Dispatcher.Invoke(() => CanUseControls = false);
+
+                System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                {
+                    FoldersToDelete.Add(new FolderThing {Path = "asdaSD", Selected = false, Size = "asdasda", Type = "12e12edad"});
+                    FoldersToDelete.Add(new FolderThing {Path = "576u6y", Selected = false, Size = "asdasda", Type = "p90p08p7"});
+                    FoldersToDelete.Add(new FolderThing {Path = "908o7", Selected = true, Size = "12d1d2", Type = "hhuktykj"});
+                });
+
+                Thread.Sleep(3000);
+
+                System.Windows.Application.Current.Dispatcher.Invoke(() => CanUseControls = true);
+            });
         }
 
         private bool CanSearch()
         {
             return CanUseControls && FoldersToSearch.Any();
+        }
+        #endregion
+
+        #region Remove Packages
+        public DelegateCommand DeletePackages {get;}
+
+        private void DeletePackagesExecute()
+        {
+            CanUseControls = false;
+        }
+
+        private bool CanDeletePackages()
+        {
+            return CanUseControls && FoldersToDelete.Any();
         }
         #endregion
 
