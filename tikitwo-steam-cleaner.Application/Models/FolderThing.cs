@@ -1,4 +1,4 @@
-﻿namespace tikitwo_steam_cleaner.WPF.Models
+﻿namespace tikitwo_steam_cleaner.Application.Models
 {
     public class FolderThing
     {
