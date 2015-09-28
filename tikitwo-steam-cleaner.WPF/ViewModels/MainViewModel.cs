@@ -7,21 +7,18 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
     public class MainViewModel : BindableBase
     {
         private readonly ISteamFolderService _steamFolderService;
-        private string _steamFolder;
 
         public MainViewModel() : this(Di.Resolve<ISteamFolderService>()) {}
 
         private MainViewModel(ISteamFolderService steamFolderService)
         {
             _steamFolderService = steamFolderService;
-            GetSteamFolder = new DelegateCommand(GetSteamFolderExecute);
 
             FindSteamFolder = new DelegateCommand(FindSteamFolderExecute, CanFindSteamFolder);
 
             CanUseControls = true;
         }
 
-        public string SteamFolder
         #region Private Backing Fields
         private bool _canUseControls;
         #endregion
@@ -58,12 +55,8 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
         }
         #endregion
 
-        #region Get Steam Folder
-        public DelegateCommand GetSteamFolder {get;private set;}
 
-        private void GetSteamFolderExecute()
         {
-            SteamFolder = _steamFolderService.GetSteamFolder();
         }
         #endregion
 
