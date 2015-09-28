@@ -1,11 +1,10 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using Prism.Commands;
 using Prism.Mvvm;
+using tikitwo_steam_cleaner.Application.Models;
 using tikitwo_steam_cleaner.Application.Services;
-using tikitwo_steam_cleaner.WPF.Models;
 
 namespace tikitwo_steam_cleaner.WPF.ViewModels
 {
@@ -140,21 +139,17 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
 
         private async void SearchExecute()
         {
-            await Task.Run(() =>
-            {
-                System.Windows.Application.Current.Dispatcher.Invoke(() => CanUseControls = false);
+            System.Windows.Application.Current.Dispatcher.Invoke(() => CanUseControls = false);
 
-                System.Windows.Application.Current.Dispatcher.Invoke(() =>
-                {
-                    FoldersToDelete.Add(new FolderThing {Path = "asdaSD", Selected = false, Size = "asdasda", Type = "12e12edad"});
-                    FoldersToDelete.Add(new FolderThing {Path = "576u6y", Selected = false, Size = "asdasda", Type = "p90p08p7"});
-                    FoldersToDelete.Add(new FolderThing {Path = "908o7", Selected = true, Size = "12d1d2", Type = "hhuktykj"});
-                });
+            FoldersToDelete.Clear();
 
-                Thread.Sleep(3000);
+            Thread.Sleep(3000);
 
-                System.Windows.Application.Current.Dispatcher.Invoke(() => CanUseControls = true);
-            });
+            var foldersToDelete = await _steamFolderService.Search(FoldersToSearch);
+
+            FoldersToDelete.AddRange(foldersToDelete);
+
+            System.Windows.Application.Current.Dispatcher.Invoke(() => CanUseControls = true);
         }
 
         private bool CanSearch()
@@ -168,7 +163,10 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
 
         private void DeletePackagesExecute()
         {
-            CanUseControls = false;
+            foreach(var folderToDelete in FoldersToDelete)
+            {
+                //delete here
+            }
         }
 
         private bool CanDeletePackages()
