@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Prism.Commands;
 using Prism.Mvvm;
 using tikitwo_steam_cleaner.Application.Models;
@@ -84,6 +85,15 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
 
             UpdateCommands();
         }
+
+        private async Task RunAsyncMethod(Task task)
+        {
+            System.Windows.Application.Current.Dispatcher.Invoke(() => CanUseControls = false);
+
+            await task;
+
+            System.Windows.Application.Current.Dispatcher.Invoke(() => CanUseControls = true);
+        }
         #endregion
 
         #region Commands
@@ -139,17 +149,16 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
 
         private async void SearchExecute()
         {
-            System.Windows.Application.Current.Dispatcher.Invoke(() => CanUseControls = false);
+            await RunAsyncMethod(Task.Run(async () =>
+            {
+                System.Windows.Application.Current.Dispatcher.Invoke(() => FoldersToDelete.Clear());
 
-            FoldersToDelete.Clear();
+                Thread.Sleep(3000);
 
-            Thread.Sleep(3000);
+                var folders = await _steamFolderService.Search(FoldersToSearch);
 
-            var foldersToDelete = await _steamFolderService.Search(FoldersToSearch);
-
-            FoldersToDelete.AddRange(foldersToDelete);
-
-            System.Windows.Application.Current.Dispatcher.Invoke(() => CanUseControls = true);
+                System.Windows.Application.Current.Dispatcher.Invoke(() => FoldersToDelete.AddRange(folders));
+            }));
         }
 
         private bool CanSearch()
@@ -161,12 +170,20 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
         #region Remove Packages
         public DelegateCommand DeletePackages {get;}
 
-        private void DeletePackagesExecute()
+        private async void DeletePackagesExecute()
         {
-            foreach(var folderToDelete in FoldersToDelete)
+            System.Windows.Application.Current.Dispatcher.Invoke(() => CanUseControls = false);
+
+            await RunAsyncMethod(Task.Run(async () =>
             {
-                //delete here
-            }
+                Thread.Sleep(3000);
+
+                await _steamFolderService.Delete(FoldersToDelete);
+
+                //TODO: update ui?
+            }));
+
+            System.Windows.Application.Current.Dispatcher.Invoke(() => CanUseControls = true);
         }
 
         private bool CanDeletePackages()

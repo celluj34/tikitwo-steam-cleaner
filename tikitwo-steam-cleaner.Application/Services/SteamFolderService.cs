@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using tikitwo_steam_cleaner.Application.Models;
@@ -28,6 +29,12 @@ namespace tikitwo_steam_cleaner.Application.Services
         /// <param name="foldersToSearch"></param>
         /// <returns>A list of folders which contains duplicate packages.</returns>
         Task<List<FolderThing>> Search(ObservableCollection<string> foldersToSearch);
+
+        /// <summary>
+        /// Deletes all of the folders.
+        /// </summary>
+        /// <param name="foldersToDelete"></param>
+        Task Delete(ObservableCollection<FolderThing> foldersToDelete);
     }
 
     public class SteamFolderService : ISteamFolderService
@@ -63,15 +70,28 @@ namespace tikitwo_steam_cleaner.Application.Services
 
         public Task<List<FolderThing>> Search(ObservableCollection<string> foldersToSearch)
         {
-            return
-                Task.Run(
-                         () =>
-                         new List<FolderThing>
-                         {
-                             new FolderThing {Path = "asdaSD", Selected = false, Size = "asdasda", Type = "12e12edad"},
-                             new FolderThing {Path = "576u6y", Selected = false, Size = "asdasda", Type = "p90p08p7"},
-                             new FolderThing {Path = "908o7", Selected = true, Size = "12d1d2", Type = "hhuktykj"}
-                         });
+            return Task.Run(() =>
+            {
+                //TODO: search for real data
+                return new List<FolderThing>
+                {
+                    new FolderThing {Path = "asdaSD", Selected = false, Size = "asdasda", Type = "12e12edad"},
+                    new FolderThing {Path = "576u6y", Selected = false, Size = "asdasda", Type = "p90p08p7"},
+                    new FolderThing {Path = "908o7", Selected = true, Size = "12d1d2", Type = "hhuktykj"}
+                };
+            });
+        }
+
+        public Task Delete(ObservableCollection<FolderThing> foldersToDelete)
+        {
+            return Task.Run(() =>
+            {
+                foreach(var folderThing in foldersToDelete)
+                {
+                    //TODO: actually delete things
+                    Thread.Sleep(1);
+                }
+            });
         }
         #endregion
     }
