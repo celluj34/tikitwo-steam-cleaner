@@ -33,7 +33,7 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
         #region Commands
 
         #region Find Steam Folder
-        public DelegateCommand FindSteamFolder {get;set;}
+        public DelegateCommand FindSteamFolder {get;private set;}
 
         private void FindSteamFolderExecute()
         {
@@ -42,7 +42,7 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
         #endregion
 
         #region Get Steam Folder
-        public DelegateCommand GetSteamFolder {get;set;}
+        public DelegateCommand GetSteamFolder {get;private set;}
 
         private void GetSteamFolderExecute()
         {
