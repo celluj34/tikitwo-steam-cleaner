@@ -14,30 +14,47 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
         private MainViewModel(ISteamFolderService steamFolderService)
         {
             _steamFolderService = steamFolderService;
-            FindSteamFolder = new DelegateCommand(FindSteamFolderExecute);
             GetSteamFolder = new DelegateCommand(GetSteamFolderExecute);
+
+            FindSteamFolder = new DelegateCommand(FindSteamFolderExecute, CanFindSteamFolder);
+
+            CanUseControls = true;
         }
 
         public string SteamFolder
+        #region Private Backing Fields
+        private bool _canUseControls;
+        #endregion
+
+        #region Public Properties
+        public bool CanUseControls
         {
-            get {return _steamFolder;}
+            get {return _canUseControls;}
             set
             {
-                if(SetProperty(ref _steamFolder, value))
+                if(SetProperty(ref _canUseControls, value))
                 {
-                    //Search.RaiseCanExecuteChanged();
+                    UpdateCommands();
                 }
             }
         }
 
+
         #region Commands
 
         #region Find Steam Folder
-        public DelegateCommand FindSteamFolder {get;private set;}
+        public DelegateCommand FindSteamFolder {get;}
 
         private void FindSteamFolderExecute()
         {
-            SteamFolder = _steamFolderService.TryGetSteamFolder();
+            var newFolder = _steamFolderService.TryGetSteamFolder();
+
+            AddFolderToDisplay(newFolder);
+        }
+
+        private bool CanFindSteamFolder()
+        {
+            return CanUseControls;
         }
         #endregion
 
