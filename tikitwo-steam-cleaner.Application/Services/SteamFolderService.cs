@@ -17,7 +17,7 @@ namespace tikitwo_steam_cleaner.Application.Services
         /// Uses a FolderBrowserDialog to let the user select their own folder.
         /// </summary>
         /// <returns>String representation of the path to the folder, if selected. Null otherwise.</returns>
-        string GetSteamFolder();
+        string GetFolder();
     }
 
     public class SteamFolderService : ISteamFolderService
@@ -37,13 +37,13 @@ namespace tikitwo_steam_cleaner.Application.Services
             var logicalDrives = _logicalDriveService.GetLogicalDrives();
 
             var steamFolder =
-                logicalDrives.SelectMany(drive => _possibleFolders, (drive, thing2) => Path.Combine(drive, thing2, SteamFolderName))
+                logicalDrives.SelectMany(drive => _possibleFolders, (drive, folder) => Path.Combine(drive, folder, SteamFolderName))
                              .FirstOrDefault(Directory.Exists);
 
             return steamFolder;
         }
 
-        public string GetSteamFolder()
+        public string GetFolder()
         {
             var fbd = new FolderBrowserDialog();
             var result = fbd.ShowDialog();
