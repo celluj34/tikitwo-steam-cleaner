@@ -1,21 +1,25 @@
 ﻿using Autofac;
+using tikitwo_steam_cleaner.Application.Services;
 
 namespace tikitwo_steam_cleaner.WPF
 {
     internal class Di
     {
-        private static IContainer _kernel;
+        private static IContainer _container;
 
         public static T Resolve<T>()
         {
-            return _kernel.Resolve<T>();
+            return _container.Resolve<T>();
         }
 
         public static void ConfigureContainer()
         {
-            var kernel = new ContainerBuilder();
+            var containerBuilder = new ContainerBuilder();
 
-            _kernel = kernel.Build();
+            containerBuilder.RegisterType<SteamFolderService>().As<ISteamFolderService>();
+            containerBuilder.RegisterType<LogicalDriveService>().As<ILogicalDriveService>();
+
+            _container = containerBuilder.Build();
         }
     }
 }
