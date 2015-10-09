@@ -34,7 +34,7 @@ namespace tikitwo_steam_cleaner.Application.Services
         /// Deletes all of the folders.
         /// </summary>
         /// <param name="foldersToDelete"></param>
-        Task Delete(ObservableCollection<FolderThing> foldersToDelete);
+        Task Delete(List<FolderThing> foldersToDelete);
     }
 
     public class SteamFolderService : ISteamFolderService
@@ -84,14 +84,14 @@ namespace tikitwo_steam_cleaner.Application.Services
             });
         }
 
-        public Task Delete(ObservableCollection<FolderThing> foldersToDelete)
+        public Task Delete(List<FolderThing> foldersToDelete)
         {
             return Task.Run(() =>
             {
                 foreach(var folderThing in foldersToDelete)
                 {
                     //TODO: actually delete things
-                    Thread.Sleep(1);
+                    Thread.Sleep(100);
                 }
             });
         }
