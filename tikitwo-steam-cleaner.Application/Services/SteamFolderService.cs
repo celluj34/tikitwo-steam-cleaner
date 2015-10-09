@@ -15,7 +15,7 @@ namespace tikitwo_steam_cleaner.Application.Services
         /// Tries to find the location of the users Steam folder based on a few known locations.
         /// </summary>
         /// <returns>String representation of the path to the folder, if found. Null otherwise.</returns>
-        string TryGetSteamFolder();
+        List<string> TryGetSteamFolder();
 
         /// <summary>
         /// Uses a FolderBrowserDialog to let the user select their own folder.
@@ -49,13 +49,15 @@ namespace tikitwo_steam_cleaner.Application.Services
         }
 
         #region ISteamFolderService Members
-        public string TryGetSteamFolder()
+        public List<string> TryGetSteamFolder()
         {
             var logicalDrives = _logicalDriveService.GetLogicalDrives();
 
+            //cross-join all logical drives with all _possibleFolders
             var steamFolder =
                 logicalDrives.SelectMany(drive => _possibleFolders, (drive, folder) => Path.Combine(drive, folder, SteamFolderName))
-                             .FirstOrDefault(Directory.Exists);
+                             .Where(Directory.Exists)
+                             .ToList();
 
             return steamFolder;
         }

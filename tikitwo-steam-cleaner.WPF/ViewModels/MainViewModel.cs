@@ -103,9 +103,12 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
 
         private void FindSteamFolderExecute()
         {
-            var newFolder = _steamFolderService.TryGetSteamFolder();
+            var possibleSteamFolders = _steamFolderService.TryGetSteamFolder();
 
-            AddFolderToDisplay(newFolder);
+            foreach(var steamFolder in possibleSteamFolders)
+            {
+                AddFolderToDisplay(steamFolder);
+            }
         }
 
         private bool CanFindSteamFolder()
