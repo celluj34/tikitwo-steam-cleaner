@@ -1,6 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Prism.Commands;
 using Prism.Mvvm;
@@ -86,11 +86,11 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
             UpdateCommands();
         }
 
-        private async Task RunAsyncMethod(Task task)
+        private async Task RunAsyncMethod(Func<Task> task)
         {
             System.Windows.Application.Current.Dispatcher.Invoke(() => CanUseControls = false);
 
-            await task;
+            await Task.Run(task);
 
             System.Windows.Application.Current.Dispatcher.Invoke(() => CanUseControls = true);
         }
@@ -152,16 +152,14 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
 
         private async void SearchExecute()
         {
-            await RunAsyncMethod(Task.Run(async () =>
+            await RunAsyncMethod(async () =>
             {
                 System.Windows.Application.Current.Dispatcher.Invoke(() => FoldersToDelete.Clear());
-
-                Thread.Sleep(3000);
 
                 var folders = await _steamFolderService.Search(FoldersToSearch);
 
                 System.Windows.Application.Current.Dispatcher.Invoke(() => FoldersToDelete.AddRange(folders));
-            }));
+            });
         }
 
         private bool CanSearch()
@@ -175,18 +173,14 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
 
         private async void DeletePackagesExecute()
         {
-            System.Windows.Application.Current.Dispatcher.Invoke(() => CanUseControls = false);
-
-            await RunAsyncMethod(Task.Run(async () =>
+            await RunAsyncMethod(async () =>
             {
-                Thread.Sleep(3000);
+                System.Windows.Application.Current.Dispatcher.Invoke(() => FoldersToDelete.Clear());
 
-                await _steamFolderService.Delete(FoldersToDelete);
+                await _steamFolderService.Delete(FoldersToDelete.ToList());
 
                 //TODO: update ui?
-            }));
-
-            System.Windows.Application.Current.Dispatcher.Invoke(() => CanUseControls = true);
+            });
         }
 
         private bool CanDeletePackages()

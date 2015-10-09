@@ -5,7 +5,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:tikitwo_steam_cleaner.WPF.ViewModels"
     x:Class="tikitwo_steam_cleaner.WPF.Views.MainWindow"
-    mc:Ignorable="d" Title="TikiTwo Steam Cleaner" SizeToContent="WidthAndHeight" MinWidth="500" MinHeight="500">
+    mc:Ignorable="d" Title="TikiTwo Steam Cleaner" Width="500" MinWidth="500" Height="500" MinHeight="500">
 
     <Window.DataContext>
         <viewModels:MainViewModel />
@@ -66,7 +66,7 @@
                         <DataGridCheckBoxColumn Width="Auto" Binding="{Binding Selected}" Header="Selected" IsReadOnly="False" />
                         <DataGridTextColumn Width="Auto" Binding="{Binding Path}" Header="Path" IsReadOnly="True" />
                         <DataGridTextColumn Width="Auto" Binding="{Binding Size}" Header="Size (MB)" IsReadOnly="True" />
-                        <DataGridTextColumn Width="Auto" Binding="{Binding Type}" Header="Type" IsReadOnly="True" />
+                        <DataGridTextColumn Width="*" Binding="{Binding Type}" Header="Type" IsReadOnly="True" />
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>
