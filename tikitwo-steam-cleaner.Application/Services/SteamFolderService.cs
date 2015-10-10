@@ -74,13 +74,33 @@ namespace tikitwo_steam_cleaner.Application.Services
         {
             return Task.Run(() =>
             {
-                //TODO: search for real data
-                return new List<FolderThing>
+                var foundFolders = new List<FolderThing>();
+                var existingFolders = foldersToSearch.Distinct().Where(Directory.Exists).ToList();
+
+                foreach(var folderToSearch in existingFolders)
+                {
+                    var directories =
+                        Directory.GetDirectories(folderToSearch, "*", SearchOption.AllDirectories)
+                                 .Select(
+                                         x =>
+                                         new
                                          {
-                    new FolderThing {Path = "asdaSD", Selected = false, Size = "asdasda", Type = "12e12edad"},
-                    new FolderThing {Path = "576u6y", Selected = false, Size = "asdasda", Type = "p90p08p7"},
-                    new FolderThing {Path = "908o7", Selected = true, Size = "12d1d2", Type = "hhuktykj"}
-                };
+                                             Path = x,
+                                             Type = "idk",
+                                             Size =
+                                             Directory.GetFiles(x, "*.*", SearchOption.AllDirectories)
+                                                      .Select(y => new FileInfo(y))
+                                                      .Select(z => z.Length)
+                                                      .DefaultIfEmpty(0)
+                                                      .Sum()
+                                         })
+                                 .Select(z => new FolderThing {Selected = true, Path = z.Path, Size = $"{((double)z.Size / 1024 / 1024).ToString("N2")} MB"})
+                                 .ToList();
+
+                    foundFolders.AddRange(directories);
+                }
+
+                return foundFolders;
             });
         }
 
