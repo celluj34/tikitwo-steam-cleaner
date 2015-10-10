@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -28,7 +27,7 @@ namespace tikitwo_steam_cleaner.Application.Services
         /// </summary>
         /// <param name="foldersToSearch"></param>
         /// <returns>A list of folders which contains duplicate packages.</returns>
-        Task<List<FolderThing>> Search(ObservableCollection<string> foldersToSearch);
+        Task<List<FolderThing>> Search(List<string> foldersToSearch);
 
         /// <summary>
         /// Deletes all of the folders.
@@ -70,13 +69,13 @@ namespace tikitwo_steam_cleaner.Application.Services
             return result == DialogResult.OK ? fbd.SelectedPath : null;
         }
 
-        public Task<List<FolderThing>> Search(ObservableCollection<string> foldersToSearch)
+        public Task<List<FolderThing>> Search(List<string> foldersToSearch)
         {
             return Task.Run(() =>
             {
                 //TODO: search for real data
                 return new List<FolderThing>
-                {
+                                         {
                     new FolderThing {Path = "asdaSD", Selected = false, Size = "asdasda", Type = "12e12edad"},
                     new FolderThing {Path = "576u6y", Selected = false, Size = "asdasda", Type = "p90p08p7"},
                     new FolderThing {Path = "908o7", Selected = true, Size = "12d1d2", Type = "hhuktykj"}
