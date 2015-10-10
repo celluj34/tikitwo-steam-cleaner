@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using Prism.Commands;
 using Prism.Mvvm;
 using tikitwo_steam_cleaner.Application.Models;
@@ -175,11 +176,19 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
         {
             await RunAsyncMethod(async () =>
             {
-                System.Windows.Application.Current.Dispatcher.Invoke(() => FoldersToDelete.Clear());
+                var foldersToDelete = FoldersToDelete.Where(x => x.Selected).ToList();
 
-                await _steamFolderService.Delete(FoldersToDelete.ToList());
+                var deletedFolders = await _steamFolderService.Delete(foldersToDelete);
 
-                //TODO: update ui?
+                var totalSaved = "";
+                deletedFolders.ForEach(x =>
+                {
+                    System.Windows.Application.Current.Dispatcher.Invoke(() => FoldersToDelete.Remove(x));
+
+                    totalSaved += x.Size;
+                });
+
+                MessageBox.Show("You saved " + totalSaved);
             });
         }
 

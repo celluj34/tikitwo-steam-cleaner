@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -33,7 +34,7 @@ namespace tikitwo_steam_cleaner.Application.Services
         /// Deletes all of the folders.
         /// </summary>
         /// <param name="foldersToDelete"></param>
-        Task Delete(List<FolderThing> foldersToDelete);
+        Task<List<FolderThing>> Delete(List<FolderThing> foldersToDelete);
     }
 
     public class SteamFolderService : ISteamFolderService
@@ -83,15 +84,28 @@ namespace tikitwo_steam_cleaner.Application.Services
             });
         }
 
-        public Task Delete(List<FolderThing> foldersToDelete)
+        public Task<List<FolderThing>> Delete(List<FolderThing> foldersToDelete)
         {
             return Task.Run(() =>
             {
-                foreach(var folderThing in foldersToDelete)
+                var deletedFolders = new List<FolderThing>();
+
+                foreach(var folderToDelete in foldersToDelete)
                 {
-                    //TODO: actually delete things
-                    Thread.Sleep(100);
+                    try
+                    {
+                        //TODO: actually delete things
+                        Thread.Sleep(100);
+
+                        deletedFolders.Add(folderToDelete);
+                    }
+                    catch(Exception ex)
+                    {
+                        //catch and do stuff here
+                    }
                 }
+
+                return deletedFolders;
             });
         }
         #endregion
