@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tikitwo-steam-cleaner.WPF",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tikitwo-steam-cleaner.Application", "tikitwo-steam-cleaner.Application\tikitwo-steam-cleaner.Application.csproj", "{64E9BF93-0415-4C67-96D2-5430E9AB304D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tikitwo-steam-cleaner.Test", "tikitwo-steam-cleaner.Test\tikitwo-steam-cleaner.Test.csproj", "{BEBBF818-26CE-4B73-B7FA-05608A4EDDC7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,22 @@ Global
 		{64E9BF93-0415-4C67-96D2-5430E9AB304D}.Release|x64.Build.0 = Release|Any CPU
 		{64E9BF93-0415-4C67-96D2-5430E9AB304D}.Release|x86.ActiveCfg = Release|Any CPU
 		{64E9BF93-0415-4C67-96D2-5430E9AB304D}.Release|x86.Build.0 = Release|Any CPU
+		{BEBBF818-26CE-4B73-B7FA-05608A4EDDC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEBBF818-26CE-4B73-B7FA-05608A4EDDC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEBBF818-26CE-4B73-B7FA-05608A4EDDC7}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{BEBBF818-26CE-4B73-B7FA-05608A4EDDC7}.Debug|ARM.Build.0 = Debug|Any CPU
+		{BEBBF818-26CE-4B73-B7FA-05608A4EDDC7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BEBBF818-26CE-4B73-B7FA-05608A4EDDC7}.Debug|x64.Build.0 = Debug|Any CPU
+		{BEBBF818-26CE-4B73-B7FA-05608A4EDDC7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BEBBF818-26CE-4B73-B7FA-05608A4EDDC7}.Debug|x86.Build.0 = Debug|Any CPU
+		{BEBBF818-26CE-4B73-B7FA-05608A4EDDC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEBBF818-26CE-4B73-B7FA-05608A4EDDC7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BEBBF818-26CE-4B73-B7FA-05608A4EDDC7}.Release|ARM.ActiveCfg = Release|Any CPU
+		{BEBBF818-26CE-4B73-B7FA-05608A4EDDC7}.Release|ARM.Build.0 = Release|Any CPU
+		{BEBBF818-26CE-4B73-B7FA-05608A4EDDC7}.Release|x64.ActiveCfg = Release|Any CPU
+		{BEBBF818-26CE-4B73-B7FA-05608A4EDDC7}.Release|x64.Build.0 = Release|Any CPU
+		{BEBBF818-26CE-4B73-B7FA-05608A4EDDC7}.Release|x86.ActiveCfg = Release|Any CPU
+		{BEBBF818-26CE-4B73-B7FA-05608A4EDDC7}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
