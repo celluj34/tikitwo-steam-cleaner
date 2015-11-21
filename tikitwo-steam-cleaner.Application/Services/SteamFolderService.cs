@@ -60,10 +60,13 @@ namespace tikitwo_steam_cleaner.Application.Services
         {
             var logicalDrives = _logicalDriveService.GetLogicalDrives();
 
-            //cross-join all logical drives with all _possibleFolders
+            var programFileLocations = _applicationSettings.ProgramFileLocations;
+            var steamFolderName = _applicationSettings.SteamFolder;
+
+            //cross-join all logical drives with all programFileLocations
             var steamFolder =
-                logicalDrives.SelectMany(drive => _possibleFolders, (drive, folder) => Path.Combine(drive, folder, SteamFolderName))
-                             .Where(Directory.Exists)
+                logicalDrives.SelectMany(drive => programFileLocations, (drive, folder) => Path.Combine(drive, folder, steamFolderName))
+                             .Where(x => _directoryService.Exists(x))
                              .ToList();
 
             return steamFolder;
@@ -79,43 +82,37 @@ namespace tikitwo_steam_cleaner.Application.Services
 
         public List<RedistItem> Search(List<string> foldersToSearch)
         {
-            return Task.Run(() =>
-            {
-                var foundFolders = new List<FolderThing>();
-                var existingFolders = foldersToSearch.Distinct().Where(Directory.Exists).ToList();
+            var redistItems = new List<RedistItem>();
+            var existingFolders = foldersToSearch.Distinct().Where(x => _directoryService.Exists(x)).ToList();
 
-                foreach(var folderToSearch in existingFolders)
-                {
-                    var directories =
-                        Directory.GetDirectories(folderToSearch, "*", SearchOption.AllDirectories)
-                                 .Select(
-                                         x =>
-                                         new
+            foreach(var existingFolder in existingFolders)
             {
-                                             Path = x,
-                                             Type = "idk",
-                                             Size =
-                                             Directory.GetFiles(x, "*.*", SearchOption.AllDirectories)
-                                                      .Select(y => new FileInfo(y))
-                                                      .Select(z => z.Length)
-                                                      .DefaultIfEmpty(0)
-                                                      .Sum()
-                                         })
-                                 .Select(z => new FolderThing {Selected = true, Path = z.Path, Size = $"{((double)z.Size / 1024 / 1024).ToString("N2")} MB"})
+                var allSubFolders = _directoryService.GetDirectories(existingFolder, SearchOption.AllDirectories).ToList();
+
+                var redistFolders =
+                    allSubFolders.Where(_redistFileService.FolderIsRedistFolder)
+                                 .Select(x => new RedistItem {Path = x, Selected = true, Type = "Folder", Size = _directoryService.GetFolderSize(x)})
+                                 .Where(y => y.Size > 0)
                                  .ToList();
 
-                    foundFolders.AddRange(directories);
+                redistItems.AddRange(redistFolders);
+
+                var redistFiles =
+                    allSubFolders.Where(x => !redistFolders.Select(y => y.Path).Contains(x))
+                                 .Select(_redistFileService.GetRedistFilesInFolder)
+                                 .SelectMany(x => x)
+                                 .Select(y => new RedistItem {Selected = true, Path = y, Type = "File", Size = new FileInfo(y).Length})
+                                 .ToList();
+
+                redistItems.AddRange(redistFiles);
             }
 
-                return foundFolders;
-            });
+            return redistItems;
         }
 
         public List<RedistItem> Delete(List<RedistItem> foldersToDelete)
         {
-            return Task.Run(() =>
-            {
-                var deletedFolders = new List<FolderThing>();
+            var deletedFolders = new List<RedistItem>();
 
             foreach(var folderToDelete in foldersToDelete)
             {
@@ -133,7 +130,6 @@ namespace tikitwo_steam_cleaner.Application.Services
             }
 
             return deletedFolders;
-            });
         }
         #endregion
     }
