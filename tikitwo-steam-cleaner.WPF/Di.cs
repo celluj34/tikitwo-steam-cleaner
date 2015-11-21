@@ -18,6 +18,9 @@ namespace tikitwo_steam_cleaner.WPF
 
             containerBuilder.RegisterType<SteamFolderService>().As<ISteamFolderService>();
             containerBuilder.RegisterType<LogicalDriveService>().As<ILogicalDriveService>();
+            containerBuilder.RegisterType<RedistFileService>().As<IRedistFileService>();
+            containerBuilder.RegisterType<ApplicationSettings>().As<IApplicationSettings>();
+            containerBuilder.RegisterType<DirectoryService>().As<IDirectoryService>();
 
             _container = containerBuilder.Build();
         }
