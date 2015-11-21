@@ -7,8 +7,9 @@ namespace tikitwo_steam_cleaner.Application.Services
     public interface IDirectoryService
     {
         bool Exists(string folder);
-        List<string> GetDirectories(string folder, SearchOption searchOption);
+        List<string> GetDirectories(string folder);
         long GetFolderSize(string folder);
+        List<string> EnumerateFiles(string folder);
     }
 
     public class DirectoryService : IDirectoryService
@@ -19,14 +20,19 @@ namespace tikitwo_steam_cleaner.Application.Services
             return Directory.Exists(folder);
         }
 
-        public List<string> GetDirectories(string folder, SearchOption searchOption)
+        public List<string> GetDirectories(string folder)
         {
-            return Directory.GetDirectories(folder, "*", searchOption).ToList();
+            return Directory.GetDirectories(folder, "*", SearchOption.AllDirectories).ToList();
         }
 
         public long GetFolderSize(string folder)
         {
             return Directory.GetFiles(folder, "*.*", SearchOption.AllDirectories).Select(y => new FileInfo(y)).Select(z => z.Length).DefaultIfEmpty(0).Sum();
+        }
+
+        public List<string> EnumerateFiles(string folder)
+        {
+            return Directory.EnumerateFiles(folder, "*", SearchOption.AllDirectories).ToList();
         }
         #endregion
     }
