@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using tikitwo_steam_cleaner.Application.Models;
@@ -14,9 +14,10 @@ namespace tikitwo_steam_cleaner.Application.Services
 
     public class RedistFileService : IRedistFileService
     {
+        private static readonly string[] SizeSuffixes = {"B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"};
         private readonly IDirectoryService _directoryService;
-        private readonly IReadOnlyCollection<Regex> _redistFiles;
-        private readonly IReadOnlyCollection<Regex> _redistFolders;
+        private readonly IReadOnlyDictionary<Regex, string> _redistFiles;
+        private readonly IReadOnlyDictionary<Regex, string> _redistFolders;
 
         public RedistFileService(IApplicationSettings applicationSettings, IDirectoryService directoryService)
         {
@@ -24,18 +25,18 @@ namespace tikitwo_steam_cleaner.Application.Services
 
             const RegexOptions regexOptions = RegexOptions.IgnoreCase | RegexOptions.Compiled;
 
-            _redistFolders = applicationSettings.RedistFolders.Select(x => new Regex(x.Key, regexOptions)).ToList();
-            _redistFiles = applicationSettings.RedistFiles.Select(x => new Regex(x.Key, regexOptions)).ToList();
+            _redistFolders = applicationSettings.RedistFolders.ToDictionary(x => new Regex(x.Key, regexOptions), y => y.Value);
+            _redistFiles = applicationSettings.RedistFiles.ToDictionary(x => new Regex(x.Key, regexOptions), y => y.Value);
         }
 
         private bool FolderIsRedistFolder(string folder)
         {
-            return _redistFolders.Any(x => x.IsMatch(folder));
+            return _redistFolders.Any(x => x.Key.IsMatch(folder));
         }
 
         private List<string> GetRedistFilesInFolder(string folder)
         {
-            return _directoryService.EnumerateFiles(folder).Where(x => _redistFiles.Any(y => y.IsMatch(x))).ToList();
+            return _directoryService.EnumerateFiles(folder).Where(x => _redistFiles.Any(y => y.Key.IsMatch(x))).ToList();
         }
 
         private static void RemoveNestedFolders(List<string> redistFolders)
@@ -60,6 +61,29 @@ namespace tikitwo_steam_cleaner.Application.Services
             }
         }
 
+        private RedistItem GenerateRedistItem(string path, long size, IReadOnlyDictionary<Regex, string> regexDictionary)
+        {
+            var redistItem = new RedistItem {Path = path, Selected = true, SizeInBytes = size};
+
+            var matchingRegex = regexDictionary.FirstOrDefault(x => x.Key.IsMatch(path));
+
+            redistItem.Type = matchingRegex.Value;
+
+            if(size == 0)
+            {
+                redistItem.Size = "0 B";
+            }
+            else
+            {
+                var magnitude = (int)Math.Log(size, 1024);
+                var adjustedSize = (decimal)size / (1L << (magnitude * 10));
+
+                redistItem.Size = $"{adjustedSize:N2} {SizeSuffixes[magnitude]}";
+            }
+
+            return redistItem;
+        }
+
         #region Implementation of IRedistFileService
         public List<RedistItem> GetRedistFolders(List<string> allFolders)
         {
@@ -69,7 +93,8 @@ namespace tikitwo_steam_cleaner.Application.Services
 
             return
                 redistFolders.AsParallel()
-                             .Select(x => new RedistItem {Path = x, Selected = true, Type = "Folder", Size = _directoryService.GetFolderSize(x)})
+                             .Select(x => new {Path = x, Size = _directoryService.GetFolderSize(x)})
+                             .Select(x => GenerateRedistItem(x.Path, x.Size, _redistFolders))
                              .ToList();
         }
 
@@ -80,7 +105,8 @@ namespace tikitwo_steam_cleaner.Application.Services
                           .Where(allFolder => !redistFolders.Any(redistFolder => allFolder.StartsWith(redistFolder.Path)))
                           .Select(GetRedistFilesInFolder)
                           .SelectMany(x => x)
-                          .Select(y => new RedistItem {Selected = true, Path = y, Type = "File", Size = new FileInfo(y).Length})
+                          .Select(y => new {Path = y, Size = _directoryService.GetFileSize(y)})
+                          .Select(x => GenerateRedistItem(x.Path, x.Size, _redistFiles))
                           .ToList();
 
             return redistFiles;

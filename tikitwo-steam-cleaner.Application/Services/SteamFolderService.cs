@@ -116,7 +116,7 @@ namespace tikitwo_steam_cleaner.Application.Services
 
             var redistFiles = _redistFileService.GetRedistFiles(allFolders, redistFolders);
 
-            return redistFolders.Concat(redistFiles).Where(x => x.Size > 0).ToList();
+            return redistFolders.Concat(redistFiles).Where(x => x.SizeInBytes > 0).ToList();
         }
     }
 }
