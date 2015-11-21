@@ -8,8 +8,8 @@ namespace tikitwo_steam_cleaner.Application.Services
 {
     public interface IRedistFileService
     {
-        List<RedistItem> GetRedistFolders(List<string> allSubFolders);
-        List<RedistItem> GetRedistFiles(List<string> allSubFolders, List<RedistItem> redistFolders);
+        List<RedistItem> GetRedistFolders(List<string> allFolders);
+        List<RedistItem> GetRedistFiles(List<string> allFolders, List<RedistItem> redistFolders);
     }
 
     public class RedistFileService : IRedistFileService
@@ -38,30 +38,50 @@ namespace tikitwo_steam_cleaner.Application.Services
             return _directoryService.EnumerateFiles(folder).Where(x => _redistFiles.Any(y => y.IsMatch(x))).ToList();
         }
 
-        #region Implementation of IRedistFileService
-        public List<RedistItem> GetRedistFolders(List<string> allSubFolders)
+        private static void RemoveNestedFolders(List<string> redistFolders)
         {
-            var redistFolders =
-                allSubFolders.AsParallel()
-                             .Where(FolderIsRedistFolder)
-                             .Select(x => new RedistItem {Path = x, Selected = true, Type = "Folder", Size = _directoryService.GetFolderSize(x)})
-                             .Where(y => y.Size > 0)
-                             .ToList();
+            for(var i = 0; i < redistFolders.Count; i++)
+            {
+                var left = redistFolders.ElementAt(i);
 
-            return redistFolders;
+                for(var j = i + 1; j < redistFolders.Count; j++)
+                {
+                    var right = redistFolders.ElementAt(j);
+
+                    if(!right.StartsWith(left))
+                    {
+                        continue;
+                    }
+
+                    redistFolders.RemoveAt(j);
+
+                    --j;
+                }
+            }
         }
 
-        public List<RedistItem> GetRedistFiles(List<string> allSubFolders, List<RedistItem> redistFolders)
+        #region Implementation of IRedistFileService
+        public List<RedistItem> GetRedistFolders(List<string> allFolders)
         {
-            var redistFolderPaths = redistFolders.Select(y => y.Path).ToList();
+            var redistFolders = allFolders.Where(FolderIsRedistFolder).ToList();
 
-            var redistFiles =
-                allSubFolders.AsParallel()
-                             .Where(x => !redistFolderPaths.Contains(x))
-                             .Select(GetRedistFilesInFolder)
-                             .SelectMany(x => x)
-                             .Select(y => new RedistItem {Selected = true, Path = y, Type = "File", Size = new FileInfo(y).Length})
+            RemoveNestedFolders(redistFolders);
+
+            return
+                redistFolders.AsParallel()
+                             .Select(x => new RedistItem {Path = x, Selected = true, Type = "Folder", Size = _directoryService.GetFolderSize(x)})
                              .ToList();
+        }
+
+        public List<RedistItem> GetRedistFiles(List<string> allFolders, List<RedistItem> redistFolders)
+        {
+            var redistFiles =
+                allFolders.AsParallel()
+                          .Where(allFolder => !redistFolders.Any(redistFolder => allFolder.StartsWith(redistFolder.Path)))
+                          .Select(GetRedistFilesInFolder)
+                          .SelectMany(x => x)
+                          .Select(y => new RedistItem {Selected = true, Path = y, Type = "File", Size = new FileInfo(y).Length})
+                          .ToList();
 
             return redistFiles;
         }

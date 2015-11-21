@@ -11,26 +11,26 @@ namespace tikitwo_steam_cleaner.Application.Services
     public interface ISteamFolderService
     {
         /// <summary>
-        /// Tries to find the location of the users Steam folder based on a few known locations.
+        ///     Tries to find the location of the users Steam folder based on a few known locations.
         /// </summary>
         /// <returns>String representation of the path to the folder, if found. Null otherwise.</returns>
         List<string> TryGetSteamFolder();
 
         /// <summary>
-        /// Uses a FolderBrowserDialog to let the user select their own folder.
+        ///     Uses a FolderBrowserDialog to let the user select their own folder.
         /// </summary>
         /// <returns>String representation of the path to the folder, if selected. Null otherwise.</returns>
         string GetFolder();
 
         /// <summary>
-        /// Search the given folders for duplicate packages.
+        ///     Search the given folders for duplicate packages.
         /// </summary>
         /// <param name="foldersToSearch"></param>
         /// <returns>A list of folders which contains duplicate packages.</returns>
         List<RedistItem> Search(List<string> foldersToSearch);
 
         /// <summary>
-        /// Deletes all of the folders.
+        ///     Deletes all of the folders.
         /// </summary>
         /// <param name="foldersToDelete"></param>
         /// <returns>A list of folders that have been successfully deleted.</returns>
@@ -116,7 +116,7 @@ namespace tikitwo_steam_cleaner.Application.Services
 
             var redistFiles = _redistFileService.GetRedistFiles(allFolders, redistFolders);
 
-            return redistFolders.Concat(redistFiles).ToList();
+            return redistFolders.Concat(redistFiles).Where(x => x.Size > 0).ToList();
         }
     }
 }
