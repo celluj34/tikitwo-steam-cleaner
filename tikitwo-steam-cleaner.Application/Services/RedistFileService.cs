@@ -2,35 +2,64 @@
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using tikitwo_steam_cleaner.Application.Models;
 
 namespace tikitwo_steam_cleaner.Application.Services
 {
     public interface IRedistFileService
     {
-        bool FolderIsRedistFolder(string folderPath);
-        List<string> GetRedistFilesInFolder(string folderPath);
+        List<RedistItem> GetRedistFolders(List<string> allSubFolders);
+        List<RedistItem> GetRedistFiles(List<string> allSubFolders, List<RedistItem> redistFolders);
     }
 
     public class RedistFileService : IRedistFileService
     {
+        private readonly IDirectoryService _directoryService;
         private readonly IReadOnlyCollection<Regex> _redistFiles;
         private readonly IReadOnlyCollection<Regex> _redistFolders;
 
-        public RedistFileService(IApplicationSettings applicationSettings)
+        public RedistFileService(IApplicationSettings applicationSettings, IDirectoryService directoryService)
         {
+            _directoryService = directoryService;
+
             _redistFolders = applicationSettings.RedistFolders.Select(x => new Regex(x.Key)).ToList();
             _redistFiles = applicationSettings.RedistFiles.Select(x => new Regex(x.Key)).ToList();
         }
 
-        #region Implementation of IRedistFileService
-        public bool FolderIsRedistFolder(string folderPath)
+        private bool FolderIsRedistFolder(string folder)
         {
-            return _redistFolders.Any(x => x.IsMatch(folderPath));
+            return _redistFolders.Any(x => x.IsMatch(folder));
         }
 
-        public List<string> GetRedistFilesInFolder(string folderPath)
+        private List<string> GetRedistFilesInFolder(string folder)
         {
-            return Directory.EnumerateFiles(folderPath, "*", SearchOption.AllDirectories).Where(x => _redistFiles.Any(y => y.IsMatch(x))).ToList();
+            return _directoryService.EnumerateFiles(folder).Where(x => _redistFiles.Any(y => y.IsMatch(x))).ToList();
+        }
+
+        #region Implementation of IRedistFileService
+        public List<RedistItem> GetRedistFolders(List<string> allSubFolders)
+        {
+            var redistFolders =
+                allSubFolders.Where(FolderIsRedistFolder)
+                             .Select(x => new RedistItem {Path = x, Selected = true, Type = "Folder", Size = _directoryService.GetFolderSize(x)})
+                             .Where(y => y.Size > 0)
+                             .ToList();
+
+            return redistFolders;
+        }
+
+        public List<RedistItem> GetRedistFiles(List<string> allSubFolders, List<RedistItem> redistFolders)
+        {
+            var redistFolderPaths = redistFolders.Select(y => y.Path).ToList();
+
+            var redistFiles =
+                allSubFolders.Where(x => !redistFolderPaths.Contains(x))
+                             .Select(GetRedistFilesInFolder)
+                             .SelectMany(x => x)
+                             .Select(y => new RedistItem {Selected = true, Path = y, Type = "File", Size = new FileInfo(y).Length})
+                             .ToList();
+
+            return redistFiles;
         }
         #endregion
     }

@@ -87,23 +87,12 @@ namespace tikitwo_steam_cleaner.Application.Services
 
             foreach(var existingFolder in existingFolders)
             {
-                var allSubFolders = _directoryService.GetDirectories(existingFolder, SearchOption.AllDirectories).ToList();
+                var allSubFolders = _directoryService.GetDirectories(existingFolder);
 
-                var redistFolders =
-                    allSubFolders.Where(_redistFileService.FolderIsRedistFolder)
-                                 .Select(x => new RedistItem {Path = x, Selected = true, Type = "Folder", Size = _directoryService.GetFolderSize(x)})
-                                 .Where(y => y.Size > 0)
-                                 .ToList();
-
+                var redistFolders = _redistFileService.GetRedistFolders(allSubFolders);
                 redistItems.AddRange(redistFolders);
 
-                var redistFiles =
-                    allSubFolders.Where(x => !redistFolders.Select(y => y.Path).Contains(x))
-                                 .Select(_redistFileService.GetRedistFilesInFolder)
-                                 .SelectMany(x => x)
-                                 .Select(y => new RedistItem {Selected = true, Path = y, Type = "File", Size = new FileInfo(y).Length})
-                                 .ToList();
-
+                var redistFiles = _redistFileService.GetRedistFiles(allSubFolders, redistFolders);
                 redistItems.AddRange(redistFiles);
             }
 
