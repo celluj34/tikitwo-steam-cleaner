@@ -176,19 +176,19 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
         {
             await RunAsyncMethod(() =>
             {
-                var foldersToDelete = FoldersToDelete.Where(x => x.Selected).ToList();
+                var itemsToDelete = FoldersToDelete.Where(x => x.Selected).ToList();
 
-                var deletedFolders = _steamFolderService.Delete(foldersToDelete);
+                var deletedFolders = _steamFolderService.Delete(itemsToDelete);
 
-                var totalSaved = "";
+                long totalSaved = 0;
                 deletedFolders.ForEach(x =>
                 {
                     System.Windows.Application.Current.Dispatcher.Invoke(() => FoldersToDelete.Remove(x));
 
-                    totalSaved += x.Size;
+                    totalSaved += x.SizeInBytes;
                 });
 
-                MessageBox.Show("You saved " + totalSaved);
+                MessageBox.Show("You saved " + totalSaved + " bytes!");
             });
         }
 
