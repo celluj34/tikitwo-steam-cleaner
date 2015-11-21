@@ -4,8 +4,9 @@
     {
         public bool Selected {get;set;}
         public string Path {get;set;}
-        public string Size {get;set;}
         public long SizeInBytes {get;set;}
-        public string Type {get;set;}
+        public string DisplaySize {get;set;}
+        public string DisplayType {get;set;}
+        public ItemTypeEnum ItemType {get;set;}
     }
 }

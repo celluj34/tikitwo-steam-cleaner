@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\RedistItem.cs" />
+    <Compile Include="Models\ItemTypeEnum.cs" />
     <Compile Include="Services\ApplicationSettings.cs" />
     <Compile Include="Services\DirectoryService.cs" />
     <Compile Include="Services\LogicalDriveService.cs" />
