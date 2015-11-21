@@ -24,11 +24,11 @@ namespace tikitwo_steam_cleaner.Application.Services
         {
             try
             {
-                var topLevelFolder = Directory.EnumerateDirectories(folder);
+                var topLevelFolders = Directory.EnumerateDirectories(folder);
 
                 var subFolders = Directory.EnumerateDirectories(folder).SelectMany(GetDirectories);
 
-                return topLevelFolder.Concat(subFolders).ToList();
+                return topLevelFolders.Concat(subFolders).ToList();
             }
             catch
             {
@@ -54,22 +54,6 @@ namespace tikitwo_steam_cleaner.Application.Services
                 return Enumerable.Empty<string>().ToList();
             }
         }
-
-        //public List<string> EnumerateFiles(string folder)
-        //{
-        //    try
-        //    {
-        //        var topLevelFiles = Directory.EnumerateFiles(folder);
-
-        //        var subFolderFiles = Directory.EnumerateDirectories(folder).SelectMany(EnumerateFiles);
-
-        //        return topLevelFiles.Concat(subFolderFiles).ToList();
-        //    }
-        //    catch
-        //    {
-        //        return Enumerable.Empty<string>().ToList();
-        //    }
-        //}
         #endregion
     }
 }
