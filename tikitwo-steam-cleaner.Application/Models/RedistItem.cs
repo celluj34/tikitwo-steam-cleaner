@@ -4,7 +4,8 @@
     {
         public bool Selected {get;set;}
         public string Path {get;set;}
-        public long Size {get;set;}
+        public string Size {get;set;}
+        public long SizeInBytes {get;set;}
         public string Type {get;set;}
     }
 }

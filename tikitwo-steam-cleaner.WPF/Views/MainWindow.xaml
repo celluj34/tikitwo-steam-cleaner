@@ -65,7 +65,7 @@
                     <DataGrid.Columns>
                         <DataGridCheckBoxColumn Width="Auto" Binding="{Binding Selected}" Header="Selected" IsReadOnly="False" />
                         <DataGridTextColumn Width="Auto" Binding="{Binding Path}" Header="Path" IsReadOnly="True" />
-                        <DataGridTextColumn Width="Auto" Binding="{Binding Size}" Header="Size (MB)" IsReadOnly="True" />
+                        <DataGridTextColumn Width="Auto" Binding="{Binding Size}" Header="Size" IsReadOnly="True" SortMemberPath="SizeInBytes" />
                         <DataGridTextColumn Width="*" Binding="{Binding Type}" Header="Type" IsReadOnly="True" />
                     </DataGrid.Columns>
                 </DataGrid>
