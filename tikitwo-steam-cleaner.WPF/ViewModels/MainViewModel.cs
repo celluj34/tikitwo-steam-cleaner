@@ -157,7 +157,7 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
             {
                 System.Windows.Application.Current.Dispatcher.Invoke(() => FoldersToDelete.Clear());
 
-                var folders = _steamFolderService.Search(FoldersToSearch.ToList());
+                var folders = _steamFolderService.Search(FoldersToSearch.ToList()).OrderBy(x => x.Path);
 
                 System.Windows.Application.Current.Dispatcher.Invoke(() => FoldersToDelete.AddRange(folders));
             });

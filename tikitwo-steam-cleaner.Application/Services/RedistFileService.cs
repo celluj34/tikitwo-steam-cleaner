@@ -22,8 +22,10 @@ namespace tikitwo_steam_cleaner.Application.Services
         {
             _directoryService = directoryService;
 
-            _redistFolders = applicationSettings.RedistFolders.Select(x => new Regex(x.Key)).ToList();
-            _redistFiles = applicationSettings.RedistFiles.Select(x => new Regex(x.Key)).ToList();
+            const RegexOptions regexOptions = RegexOptions.IgnoreCase | RegexOptions.Compiled;
+
+            _redistFolders = applicationSettings.RedistFolders.Select(x => new Regex(x.Key, regexOptions)).ToList();
+            _redistFiles = applicationSettings.RedistFiles.Select(x => new Regex(x.Key, regexOptions)).ToList();
         }
 
         private bool FolderIsRedistFolder(string folder)
@@ -40,7 +42,8 @@ namespace tikitwo_steam_cleaner.Application.Services
         public List<RedistItem> GetRedistFolders(List<string> allSubFolders)
         {
             var redistFolders =
-                allSubFolders.Where(FolderIsRedistFolder)
+                allSubFolders.AsParallel()
+                             .Where(FolderIsRedistFolder)
                              .Select(x => new RedistItem {Path = x, Selected = true, Type = "Folder", Size = _directoryService.GetFolderSize(x)})
                              .Where(y => y.Size > 0)
                              .ToList();
@@ -53,7 +56,8 @@ namespace tikitwo_steam_cleaner.Application.Services
             var redistFolderPaths = redistFolders.Select(y => y.Path).ToList();
 
             var redistFiles =
-                allSubFolders.Where(x => !redistFolderPaths.Contains(x))
+                allSubFolders.AsParallel()
+                             .Where(x => !redistFolderPaths.Contains(x))
                              .Select(GetRedistFilesInFolder)
                              .SelectMany(x => x)
                              .Select(y => new RedistItem {Selected = true, Path = y, Type = "File", Size = new FileInfo(y).Length})

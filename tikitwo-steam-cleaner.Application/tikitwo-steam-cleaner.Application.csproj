@@ -44,7 +44,7 @@
   <ItemGroup>
     <Compile Include="Models\RedistItem.cs" />
     <Compile Include="Services\ApplicationSettings.cs" />
-    <Compile Include="Services\DirectoryServicve.cs" />
+    <Compile Include="Services\DirectoryService.cs" />
     <Compile Include="Services\LogicalDriveService.cs" />
     <Compile Include="Services\RedistFileService.cs" />
     <Compile Include="Services\SteamFolderService.cs" />
