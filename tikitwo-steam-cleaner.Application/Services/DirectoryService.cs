@@ -10,6 +10,7 @@ namespace tikitwo_steam_cleaner.Application.Services
         List<string> GetDirectories(string folder);
         long GetFolderSize(string folder);
         List<string> EnumerateFiles(string folder);
+        long GetFileSize(string filePath);
     }
 
     public class DirectoryService : IDirectoryService
@@ -50,6 +51,20 @@ namespace tikitwo_steam_cleaner.Application.Services
             catch
             {
                 return Enumerable.Empty<string>().ToList();
+            }
+        }
+
+        public long GetFileSize(string filePath)
+        {
+            try
+            {
+                var fileInfo = new FileInfo(filePath);
+
+                return fileInfo.Length;
+            }
+            catch
+            {
+                return 0;
             }
         }
         #endregion
