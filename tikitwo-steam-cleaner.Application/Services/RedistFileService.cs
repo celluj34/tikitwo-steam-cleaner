@@ -29,6 +29,35 @@ namespace tikitwo_steam_cleaner.Application.Services
             _redistFiles = applicationSettings.RedistFiles.ToDictionary(x => new Regex(x.Key, regexOptions), y => y.Value);
         }
 
+        #region IRedistFileService Members
+        public List<RedistItem> GetRedistFolders(List<string> allFolders)
+        {
+            var redistFolders = allFolders.Where(FolderIsRedistFolder).ToList();
+
+            RemoveNestedFolders(redistFolders);
+
+            return
+                redistFolders.AsParallel()
+                             .Select(x => new {Path = x, Size = _directoryService.GetFolderSize(x)})
+                             .Select(x => GenerateRedistItem(x.Path, x.Size, ItemTypeEnum.Folder))
+                             .ToList();
+        }
+
+        public List<RedistItem> GetRedistFiles(List<string> allFolders, List<RedistItem> redistFolders)
+        {
+            var redistFiles =
+                allFolders.AsParallel()
+                          .Where(allFolder => !redistFolders.Any(redistFolder => allFolder.StartsWith(redistFolder.Path)))
+                          .Select(GetRedistFilesInFolder)
+                          .SelectMany(x => x)
+                          .Select(y => new {Path = y, Size = _directoryService.GetFileSize(y)})
+                          .Select(x => GenerateRedistItem(x.Path, x.Size, ItemTypeEnum.File))
+                          .ToList();
+
+            return redistFiles;
+        }
+        #endregion
+
         private bool FolderIsRedistFolder(string folder)
         {
             return _redistFolders.Any(x => x.Key.IsMatch(folder));
@@ -100,34 +129,5 @@ namespace tikitwo_steam_cleaner.Application.Services
 
             return $"{adjustedSize:N2} {SizeSuffixes[magnitude]}";
         }
-
-        #region Implementation of IRedistFileService
-        public List<RedistItem> GetRedistFolders(List<string> allFolders)
-        {
-            var redistFolders = allFolders.Where(FolderIsRedistFolder).ToList();
-
-            RemoveNestedFolders(redistFolders);
-
-            return
-                redistFolders.AsParallel()
-                             .Select(x => new {Path = x, Size = _directoryService.GetFolderSize(x)})
-                             .Select(x => GenerateRedistItem(x.Path, x.Size, ItemTypeEnum.Folder))
-                             .ToList();
-        }
-
-        public List<RedistItem> GetRedistFiles(List<string> allFolders, List<RedistItem> redistFolders)
-        {
-            var redistFiles =
-                allFolders.AsParallel()
-                          .Where(allFolder => !redistFolders.Any(redistFolder => allFolder.StartsWith(redistFolder.Path)))
-                          .Select(GetRedistFilesInFolder)
-                          .SelectMany(x => x)
-                          .Select(y => new {Path = y, Size = _directoryService.GetFileSize(y)})
-                          .Select(x => GenerateRedistItem(x.Path, x.Size, ItemTypeEnum.File))
-                          .ToList();
-
-            return redistFiles;
-        }
-        #endregion
     }
 }
