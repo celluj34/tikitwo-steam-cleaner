@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using tikitwo_steam_cleaner.Application.Models;
 
 namespace tikitwo_steam_cleaner.Application.Services
 {
@@ -11,6 +13,7 @@ namespace tikitwo_steam_cleaner.Application.Services
         long GetFolderSize(string folder);
         List<string> EnumerateFiles(string folder);
         long GetFileSize(string filePath);
+        bool Delete(RedistItem itemToDelete);
     }
 
     public class DirectoryService : IDirectoryService
@@ -67,6 +70,49 @@ namespace tikitwo_steam_cleaner.Application.Services
                 return 0;
             }
         }
+
+        public bool Delete(RedistItem itemToDelete)
+        {
+            switch(itemToDelete.ItemType)
+            {
+                case ItemTypeEnum.Folder:
+                    return DeleteFolder(itemToDelete.Path);
+
+                case ItemTypeEnum.File:
+                    return DeleteFile(itemToDelete.Path);
+
+                default:
+                    return false;
+            }
+        }
         #endregion
+
+        private bool DeleteFolder(string folderToDelete)
+        {
+            try
+            {
+                Directory.Delete(folderToDelete, true);
+
+                return true;
+            }
+            catch(Exception ex)
+            {
+                return false;
+            }
+        }
+
+        private bool DeleteFile(string fileToDelete)
+        {
+            try
+            {
+                File.Delete(fileToDelete);
+
+                return true;
+            }
+            catch(Exception ex)
+            {
+                return false;
+            }
+        }
     }
 }

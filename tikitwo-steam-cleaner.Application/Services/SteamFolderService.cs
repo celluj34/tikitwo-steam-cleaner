@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Windows.Forms;
 using tikitwo_steam_cleaner.Application.Models;
 
@@ -30,11 +28,11 @@ namespace tikitwo_steam_cleaner.Application.Services
         List<RedistItem> Search(List<string> foldersToSearch);
 
         /// <summary>
-        ///     Deletes all of the folders.
+        ///     Deletes all of the items.
         /// </summary>
-        /// <param name="foldersToDelete"></param>
-        /// <returns>A list of folders that have been successfully deleted.</returns>
-        List<RedistItem> Delete(List<RedistItem> foldersToDelete);
+        /// <param name="itemsToDelete"></param>
+        /// <returns>A list of items that have been successfully deleted.</returns>
+        List<RedistItem> Delete(List<RedistItem> itemsToDelete);
     }
 
     public class SteamFolderService : ISteamFolderService
@@ -85,26 +83,13 @@ namespace tikitwo_steam_cleaner.Application.Services
             return foldersToSearch.Distinct().AsParallel().Where(x => _directoryService.Exists(x)).SelectMany(GetRedistItemsForFolder).ToList();
         }
 
-        public List<RedistItem> Delete(List<RedistItem> foldersToDelete)
+        public List<RedistItem> Delete(List<RedistItem> itemsToDelete)
         {
-            var deletedFolders = new List<RedistItem>();
-
-            foreach(var folderToDelete in foldersToDelete)
-            {
-                try
-                {
-                    //TODO: actually delete things
-                    Thread.Sleep(100);
-
-                    deletedFolders.Add(folderToDelete);
-                }
-                catch(Exception ex)
-                {
-                    //catch and do stuff here
-                }
-            }
-
-            return deletedFolders;
+            return
+                itemsToDelete.Select(x => new {itemToDelete = x, success = _directoryService.Delete(x)})
+                             .Where(y => y.success)
+                             .Select(z => z.itemToDelete)
+                             .ToList();
         }
         #endregion
 
