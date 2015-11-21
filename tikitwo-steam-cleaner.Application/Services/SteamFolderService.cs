@@ -82,21 +82,7 @@ namespace tikitwo_steam_cleaner.Application.Services
 
         public List<RedistItem> Search(List<string> foldersToSearch)
         {
-            var redistItems = new List<RedistItem>();
-            var existingFolders = foldersToSearch.Distinct().Where(x => _directoryService.Exists(x)).ToList();
-
-            foreach(var existingFolder in existingFolders.AsParallel())
-            {
-                var allFolders = _directoryService.GetDirectories(existingFolder);
-
-                var redistFolders = _redistFileService.GetRedistFolders(allFolders);
-                redistItems.AddRange(redistFolders);
-
-                var redistFiles = _redistFileService.GetRedistFiles(allFolders, redistFolders);
-                redistItems.AddRange(redistFiles);
-            }
-
-            return redistItems;
+            return foldersToSearch.Distinct().AsParallel().Where(x => _directoryService.Exists(x)).SelectMany(GetRedistItemsForFolder).ToList();
         }
 
         public List<RedistItem> Delete(List<RedistItem> foldersToDelete)
@@ -121,5 +107,16 @@ namespace tikitwo_steam_cleaner.Application.Services
             return deletedFolders;
         }
         #endregion
+
+        private List<RedistItem> GetRedistItemsForFolder(string folder)
+        {
+            var allFolders = _directoryService.GetDirectories(folder);
+
+            var redistFolders = _redistFileService.GetRedistFolders(allFolders);
+
+            var redistFiles = _redistFileService.GetRedistFiles(allFolders, redistFolders);
+
+            return redistFolders.Concat(redistFiles).ToList();
+        }
     }
 }
