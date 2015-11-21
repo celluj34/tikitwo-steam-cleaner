@@ -31,6 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
@@ -41,7 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\FolderThing.cs" />
+    <Compile Include="Models\RedistItem.cs" />
     <Compile Include="Services\ApplicationSettings.cs" />
     <Compile Include="Services\DirectoryServicve.cs" />
     <Compile Include="Services\LogicalDriveService.cs" />
