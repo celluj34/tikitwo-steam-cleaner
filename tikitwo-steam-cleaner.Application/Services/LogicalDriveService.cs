@@ -7,7 +7,7 @@ namespace tikitwo_steam_cleaner.Application.Services
     public interface ILogicalDriveService
     {
         /// <summary>
-        /// Returns all logical drives connected to the computer. e.g., C:\, D:\, etc.
+        ///     Returns all logical drives connected to the computer. e.g., C:\, D:\, etc.
         /// </summary>
         /// <returns>A list of strings of all connected drives.</returns>
         List<string> GetLogicalDrives();
