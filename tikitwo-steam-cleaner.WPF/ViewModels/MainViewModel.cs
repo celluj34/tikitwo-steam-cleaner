@@ -28,7 +28,7 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
 
             CanUseControls = true;
             FoldersToSearch = new ObservableCollection<string>();
-            FoldersToDelete = new ObservableCollection<FolderThing>();
+            FoldersToDelete = new ObservableCollection<RedistItem>();
         }
 
         #region Private Backing Fields
@@ -62,7 +62,7 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
         }
 
         public ObservableCollection<string> FoldersToSearch {get;set;}
-        public ObservableCollection<FolderThing> FoldersToDelete {get;set;}
+        public ObservableCollection<RedistItem> FoldersToDelete {get;set;}
         #endregion
 
         #region Helper Methods
@@ -87,7 +87,7 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
             UpdateCommands();
         }
 
-        private async Task RunAsyncMethod(Func<Task> task)
+        private async Task RunAsyncMethod(Action task)
         {
             System.Windows.Application.Current.Dispatcher.Invoke(() => CanUseControls = false);
 
@@ -153,11 +153,11 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
 
         private async void SearchExecute()
         {
-            await RunAsyncMethod(async () =>
+            await RunAsyncMethod(() =>
             {
                 System.Windows.Application.Current.Dispatcher.Invoke(() => FoldersToDelete.Clear());
 
-                var folders = await _steamFolderService.Search(FoldersToSearch.ToList());
+                var folders = _steamFolderService.Search(FoldersToSearch.ToList());
 
                 System.Windows.Application.Current.Dispatcher.Invoke(() => FoldersToDelete.AddRange(folders));
             });
@@ -174,11 +174,11 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
 
         private async void DeletePackagesExecute()
         {
-            await RunAsyncMethod(async () =>
+            await RunAsyncMethod(() =>
             {
                 var foldersToDelete = FoldersToDelete.Where(x => x.Selected).ToList();
 
-                var deletedFolders = await _steamFolderService.Delete(foldersToDelete);
+                var deletedFolders = _steamFolderService.Delete(foldersToDelete);
 
                 var totalSaved = "";
                 deletedFolders.ForEach(x =>

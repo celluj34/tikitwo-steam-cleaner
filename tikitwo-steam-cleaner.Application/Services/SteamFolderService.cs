@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using tikitwo_steam_cleaner.Application.Models;
 
@@ -28,24 +27,32 @@ namespace tikitwo_steam_cleaner.Application.Services
         /// </summary>
         /// <param name="foldersToSearch"></param>
         /// <returns>A list of folders which contains duplicate packages.</returns>
-        Task<List<FolderThing>> Search(List<string> foldersToSearch);
+        List<RedistItem> Search(List<string> foldersToSearch);
 
         /// <summary>
         /// Deletes all of the folders.
         /// </summary>
         /// <param name="foldersToDelete"></param>
-        Task<List<FolderThing>> Delete(List<FolderThing> foldersToDelete);
+        /// <returns>A list of folders that have been successfully deleted.</returns>
+        List<RedistItem> Delete(List<RedistItem> foldersToDelete);
     }
 
     public class SteamFolderService : ISteamFolderService
     {
-        private const string SteamFolderName = "Steam";
+        private readonly IApplicationSettings _applicationSettings;
+        private readonly IDirectoryService _directoryService;
         private readonly ILogicalDriveService _logicalDriveService;
-        private readonly List<string> _possibleFolders = new List<string> {"Program Files (x86)", "Program Files", ""};
+        private readonly IRedistFileService _redistFileService;
 
-        public SteamFolderService(ILogicalDriveService logicalDriveService)
+        public SteamFolderService(IApplicationSettings applicationSettings,
+                                  ILogicalDriveService logicalDriveService,
+                                  IRedistFileService redistFileService,
+                                  IDirectoryService directoryService)
         {
+            _applicationSettings = applicationSettings;
             _logicalDriveService = logicalDriveService;
+            _redistFileService = redistFileService;
+            _directoryService = directoryService;
         }
 
         #region ISteamFolderService Members
@@ -70,7 +77,7 @@ namespace tikitwo_steam_cleaner.Application.Services
             return result == DialogResult.OK ? fbd.SelectedPath : null;
         }
 
-        public Task<List<FolderThing>> Search(List<string> foldersToSearch)
+        public List<RedistItem> Search(List<string> foldersToSearch)
         {
             return Task.Run(() =>
             {
@@ -84,7 +91,7 @@ namespace tikitwo_steam_cleaner.Application.Services
                                  .Select(
                                          x =>
                                          new
-                                         {
+            {
                                              Path = x,
                                              Type = "idk",
                                              Size =
@@ -98,34 +105,34 @@ namespace tikitwo_steam_cleaner.Application.Services
                                  .ToList();
 
                     foundFolders.AddRange(directories);
-                }
+            }
 
                 return foundFolders;
             });
         }
 
-        public Task<List<FolderThing>> Delete(List<FolderThing> foldersToDelete)
+        public List<RedistItem> Delete(List<RedistItem> foldersToDelete)
         {
             return Task.Run(() =>
             {
                 var deletedFolders = new List<FolderThing>();
 
-                foreach(var folderToDelete in foldersToDelete)
+            foreach(var folderToDelete in foldersToDelete)
+            {
+                try
                 {
-                    try
-                    {
-                        //TODO: actually delete things
-                        Thread.Sleep(100);
+                    //TODO: actually delete things
+                    Thread.Sleep(100);
 
-                        deletedFolders.Add(folderToDelete);
-                    }
-                    catch(Exception ex)
-                    {
-                        //catch and do stuff here
-                    }
+                    deletedFolders.Add(folderToDelete);
                 }
+                catch(Exception ex)
+                {
+                    //catch and do stuff here
+                }
+            }
 
-                return deletedFolders;
+            return deletedFolders;
             });
         }
         #endregion
