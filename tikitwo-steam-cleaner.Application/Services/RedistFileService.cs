@@ -61,27 +61,44 @@ namespace tikitwo_steam_cleaner.Application.Services
             }
         }
 
-        private RedistItem GenerateRedistItem(string path, long size, IReadOnlyDictionary<Regex, string> regexDictionary)
+        private RedistItem GenerateRedistItem(string path, long size, ItemTypeEnum itemType)
         {
-            var redistItem = new RedistItem {Path = path, Selected = true, SizeInBytes = size};
+            return new RedistItem
+            {
+                Path = path,
+                Selected = true,
+                SizeInBytes = size,
+                DisplayType = GetDisplayType(path, itemType),
+                DisplaySize = GetDisplaySize(size),
+                ItemType = itemType
+            };
+        }
 
-            var matchingRegex = regexDictionary.FirstOrDefault(x => x.Key.IsMatch(path));
+        private string GetDisplayType(string path, ItemTypeEnum itemType)
+        {
+            switch(itemType)
+            {
+                case ItemTypeEnum.Folder:
+                    return _redistFolders.First(x => x.Key.IsMatch(path)).Value;
 
-            redistItem.Type = matchingRegex.Value;
+                case ItemTypeEnum.File:
+                    return _redistFiles.First(x => x.Key.IsMatch(path)).Value;
 
+                default:
+                    return null;
+            }
+        }
+
+        private string GetDisplaySize(long size)
+        {
             if(size == 0)
             {
-                redistItem.Size = "0 B";
+                return "0 B";
             }
-            else
-            {
-                var magnitude = (int)Math.Log(size, 1024);
-                var adjustedSize = (decimal)size / (1L << (magnitude * 10));
+            var magnitude = (int)Math.Log(size, 1024);
+            var adjustedSize = (decimal)size / (1L << (magnitude * 10));
 
-                redistItem.Size = $"{adjustedSize:N2} {SizeSuffixes[magnitude]}";
-            }
-
-            return redistItem;
+            return $"{adjustedSize:N2} {SizeSuffixes[magnitude]}";
         }
 
         #region Implementation of IRedistFileService
@@ -94,7 +111,7 @@ namespace tikitwo_steam_cleaner.Application.Services
             return
                 redistFolders.AsParallel()
                              .Select(x => new {Path = x, Size = _directoryService.GetFolderSize(x)})
-                             .Select(x => GenerateRedistItem(x.Path, x.Size, _redistFolders))
+                             .Select(x => GenerateRedistItem(x.Path, x.Size, ItemTypeEnum.Folder))
                              .ToList();
         }
 
@@ -106,7 +123,7 @@ namespace tikitwo_steam_cleaner.Application.Services
                           .Select(GetRedistFilesInFolder)
                           .SelectMany(x => x)
                           .Select(y => new {Path = y, Size = _directoryService.GetFileSize(y)})
-                          .Select(x => GenerateRedistItem(x.Path, x.Size, _redistFiles))
+                          .Select(x => GenerateRedistItem(x.Path, x.Size, ItemTypeEnum.File))
                           .ToList();
 
             return redistFiles;
