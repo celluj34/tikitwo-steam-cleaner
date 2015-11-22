@@ -34,6 +34,7 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
         #region Private Backing Fields
         private bool _canUseControls;
         private string _selectedFolder;
+        private int _packagesFound;
         #endregion
 
         #region Public Properties
@@ -59,6 +60,12 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
                     UpdateCommands();
                 }
             }
+        }
+
+        public int PackagesFound
+        {
+            get {return _packagesFound;}
+            set {SetProperty(ref _packagesFound, value);}
         }
 
         public ObservableCollection<string> FoldersToSearch {get;set;}
@@ -155,11 +162,21 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
         {
             await RunAsyncMethod(() =>
             {
-                System.Windows.Application.Current.Dispatcher.Invoke(() => FoldersToDelete.Clear());
+                System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                {
+                    FoldersToDelete.Clear();
+                    PackagesFound = 0;
+                });
 
-                var folders = _steamFolderService.Search(FoldersToSearch.ToList()).OrderBy(x => x.Path);
+                var foldersToSearch = FoldersToSearch.ToList();
 
-                System.Windows.Application.Current.Dispatcher.Invoke(() => FoldersToDelete.AddRange(folders));
+                var folders = _steamFolderService.Search(foldersToSearch).OrderBy(x => x.Path);
+
+                System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                {
+                    FoldersToDelete.AddRange(folders);
+                    PackagesFound = folders.Count();
+                });
             });
         }
 

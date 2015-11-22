@@ -44,7 +44,7 @@
             </Grid>
         </GroupBox>
 
-        <GroupBox Grid.Column="0" Grid.Row="1" Margin="5" Header="Redistributable packages found: 0">
+        <GroupBox Grid.Column="0" Grid.Row="1" Margin="5" HeaderStringFormat="Redistributable packages found: {0}" Header="{Binding PackagesFound}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
