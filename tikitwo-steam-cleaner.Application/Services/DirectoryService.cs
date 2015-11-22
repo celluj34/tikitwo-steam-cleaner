@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using tikitwo_steam_cleaner.Application.Models;
@@ -70,11 +69,19 @@ namespace tikitwo_steam_cleaner.Application.Services
         {
             try
             {
-                Directory.Delete(folderToDelete, true);
+                var files = Directory.GetFiles(folderToDelete);
 
-                return true;
+                var success = files.Aggregate(true, (current, file) => current & DeleteFile(file));
+
+                var folders = Directory.GetDirectories(folderToDelete);
+
+                success = folders.Aggregate(success, (current, folder) => current & DeleteFolder(folder));
+
+                Directory.Delete(folderToDelete);
+
+                return success;
             }
-            catch(Exception ex)
+            catch
             {
                 return false;
             }
@@ -88,7 +95,7 @@ namespace tikitwo_steam_cleaner.Application.Services
 
                 return true;
             }
-            catch(Exception ex)
+            catch
             {
                 return false;
             }

@@ -12,13 +12,15 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
 {
     public class MainViewModel : BindableBase
     {
+        private readonly ISizeService _sizeService;
         private readonly ISteamFolderService _steamFolderService;
 
-        public MainViewModel() : this(Di.Resolve<ISteamFolderService>()) {}
+        public MainViewModel() : this(Di.Resolve<ISteamFolderService>(), Di.Resolve<ISizeService>()) {}
 
-        private MainViewModel(ISteamFolderService steamFolderService)
+        private MainViewModel(ISteamFolderService steamFolderService, ISizeService sizeService)
         {
             _steamFolderService = steamFolderService;
+            _sizeService = sizeService;
 
             FindSteamFolder = new DelegateCommand(FindSteamFolderExecute, CanFindSteamFolder);
             AddFolder = new DelegateCommand(AddFolderExecute, CanAddFolder);
@@ -34,7 +36,6 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
         #region Private Backing Fields
         private bool _canUseControls;
         private string _selectedFolder;
-        private int _packagesFound;
         #endregion
 
         #region Public Properties
@@ -62,11 +63,7 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
             }
         }
 
-        public int PackagesFound
-        {
-            get {return _packagesFound;}
-            set {SetProperty(ref _packagesFound, value);}
-        }
+        public int PackagesFound => FoldersToDelete.Count;
 
         public ObservableCollection<string> FoldersToSearch {get;set;}
         public ObservableCollection<RedistItem> FoldersToDelete {get;set;}
@@ -162,21 +159,11 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
         {
             await RunAsyncMethod(() =>
             {
-                System.Windows.Application.Current.Dispatcher.Invoke(() =>
-                {
-                    FoldersToDelete.Clear();
-                    PackagesFound = 0;
-                });
+                System.Windows.Application.Current.Dispatcher.Invoke(() => FoldersToDelete.Clear());
 
-                var foldersToSearch = FoldersToSearch.ToList();
+                var folders = _steamFolderService.Search(FoldersToSearch.ToList()).OrderBy(x => x.Path);
 
-                var folders = _steamFolderService.Search(foldersToSearch).OrderBy(x => x.Path);
-
-                System.Windows.Application.Current.Dispatcher.Invoke(() =>
-                {
-                    FoldersToDelete.AddRange(folders);
-                    PackagesFound = folders.Count();
-                });
+                System.Windows.Application.Current.Dispatcher.Invoke(() => FoldersToDelete.AddRange(folders));
             });
         }
 
@@ -205,7 +192,9 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
                     totalSaved += x.SizeInBytes;
                 });
 
-                MessageBox.Show("You saved " + totalSaved + " bytes!");
+                var size = _sizeService.GetDisplaySize(totalSaved);
+
+                MessageBox.Show("You saved " + size + "!");
             });
         }
 
