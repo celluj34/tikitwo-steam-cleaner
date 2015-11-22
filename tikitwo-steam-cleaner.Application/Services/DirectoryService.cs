@@ -8,7 +8,7 @@ namespace tikitwo_steam_cleaner.Application.Services
 {
     public interface IDirectoryService
     {
-        bool Exists(string folder);
+        bool FolderExists(string folder);
         List<string> GetDirectories(string folder);
         List<string> EnumerateFiles(string folder);
         bool Delete(RedistItem itemToDelete);
@@ -17,7 +17,7 @@ namespace tikitwo_steam_cleaner.Application.Services
     public class DirectoryService : IDirectoryService
     {
         #region IDirectoryService Members
-        public bool Exists(string folder)
+        public bool FolderExists(string folder)
         {
             return Directory.Exists(folder);
         }

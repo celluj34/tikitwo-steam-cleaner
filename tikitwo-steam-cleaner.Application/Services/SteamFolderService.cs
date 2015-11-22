@@ -58,13 +58,11 @@ namespace tikitwo_steam_cleaner.Application.Services
         {
             var logicalDrives = _logicalDriveService.GetLogicalDrives();
 
-            var programFileLocations = _applicationSettings.ProgramFileLocations;
-            var steamFolderName = _applicationSettings.SteamFolder;
-
             //cross-join all logical drives with all programFileLocations
             var steamFolder =
-                logicalDrives.SelectMany(drive => programFileLocations, (drive, folder) => Path.Combine(drive, folder, steamFolderName))
-                             .Where(x => _directoryService.Exists(x))
+                logicalDrives.SelectMany(drive => _applicationSettings.ProgramFileLocations,
+                                         (drive, folder) => Path.Combine(drive, folder, _applicationSettings.SteamFolder))
+                             .Where(_directoryService.FolderExists)
                              .ToList();
 
             return steamFolder;
@@ -80,15 +78,15 @@ namespace tikitwo_steam_cleaner.Application.Services
 
         public List<RedistItem> Search(List<string> foldersToSearch)
         {
-            return foldersToSearch.Distinct().AsParallel().Where(x => _directoryService.Exists(x)).SelectMany(GetRedistItemsForFolder).ToList();
+            return foldersToSearch.Distinct().AsParallel().Where(x => _directoryService.FolderExists(x)).SelectMany(GetRedistItemsForFolder).ToList();
         }
 
         public List<RedistItem> Delete(List<RedistItem> itemsToDelete)
         {
             return
-                itemsToDelete.Select(x => new {itemToDelete = x, success = _directoryService.Delete(x)})
-                             .Where(y => y.success)
-                             .Select(z => z.itemToDelete)
+                itemsToDelete.Select(x => new {ItemToDelete = x, Success = _directoryService.Delete(x)})
+                             .Where(y => y.Success)
+                             .Select(z => z.ItemToDelete)
                              .ToList();
         }
         #endregion
