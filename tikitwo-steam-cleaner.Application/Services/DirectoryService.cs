@@ -10,9 +10,7 @@ namespace tikitwo_steam_cleaner.Application.Services
     {
         bool Exists(string folder);
         List<string> GetDirectories(string folder);
-        long GetFolderSize(string folder);
         List<string> EnumerateFiles(string folder);
-        long GetFileSize(string filePath);
         bool Delete(RedistItem itemToDelete);
     }
 
@@ -40,11 +38,6 @@ namespace tikitwo_steam_cleaner.Application.Services
             }
         }
 
-        public long GetFolderSize(string folder)
-        {
-            return Directory.EnumerateFiles(folder, "*", SearchOption.AllDirectories).Select(y => new FileInfo(y)).Select(z => z.Length).DefaultIfEmpty(0).Sum();
-        }
-
         public List<string> EnumerateFiles(string folder)
         {
             try
@@ -54,20 +47,6 @@ namespace tikitwo_steam_cleaner.Application.Services
             catch
             {
                 return Enumerable.Empty<string>().ToList();
-            }
-        }
-
-        public long GetFileSize(string filePath)
-        {
-            try
-            {
-                var fileInfo = new FileInfo(filePath);
-
-                return fileInfo.Length;
-            }
-            catch
-            {
-                return 0;
             }
         }
 

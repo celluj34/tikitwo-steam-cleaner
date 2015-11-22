@@ -48,6 +48,7 @@
     <Compile Include="Services\DirectoryService.cs" />
     <Compile Include="Services\LogicalDriveService.cs" />
     <Compile Include="Services\RedistFileService.cs" />
+    <Compile Include="Services\SizeService.cs" />
     <Compile Include="Services\SteamFolderService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

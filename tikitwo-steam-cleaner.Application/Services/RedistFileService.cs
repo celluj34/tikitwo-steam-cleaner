@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using tikitwo_steam_cleaner.Application.Models;
@@ -14,14 +13,15 @@ namespace tikitwo_steam_cleaner.Application.Services
 
     public class RedistFileService : IRedistFileService
     {
-        private static readonly string[] SizeSuffixes = {"B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"};
         private readonly IDirectoryService _directoryService;
         private readonly IReadOnlyDictionary<Regex, string> _redistFiles;
         private readonly IReadOnlyDictionary<Regex, string> _redistFolders;
+        private readonly ISizeService _sizeService;
 
-        public RedistFileService(IApplicationSettings applicationSettings, IDirectoryService directoryService)
+        public RedistFileService(IApplicationSettings applicationSettings, IDirectoryService directoryService, ISizeService sizeService)
         {
             _directoryService = directoryService;
+            _sizeService = sizeService;
 
             const RegexOptions regexOptions = RegexOptions.IgnoreCase | RegexOptions.Compiled;
 
@@ -38,7 +38,7 @@ namespace tikitwo_steam_cleaner.Application.Services
 
             return
                 redistFolders.AsParallel()
-                             .Select(x => new {Path = x, Size = _directoryService.GetFolderSize(x)})
+                             .Select(x => new {Path = x, Size = _sizeService.GetFolderSize(x)})
                              .Select(x => GenerateRedistItem(x.Path, x.Size, ItemTypeEnum.Folder))
                              .ToList();
         }
@@ -50,7 +50,7 @@ namespace tikitwo_steam_cleaner.Application.Services
                           .Where(allFolder => !redistFolders.Any(redistFolder => allFolder.StartsWith(redistFolder.Path)))
                           .Select(GetRedistFilesInFolder)
                           .SelectMany(x => x)
-                          .Select(y => new {Path = y, Size = _directoryService.GetFileSize(y)})
+                          .Select(y => new {Path = y, Size = _sizeService.GetFileSize(y)})
                           .Select(x => GenerateRedistItem(x.Path, x.Size, ItemTypeEnum.File))
                           .ToList();
 
@@ -98,7 +98,7 @@ namespace tikitwo_steam_cleaner.Application.Services
                 Selected = true,
                 SizeInBytes = size,
                 DisplayType = GetDisplayType(path, itemType),
-                DisplaySize = GetDisplaySize(size),
+                DisplaySize = _sizeService.GetDisplaySize(size),
                 ItemType = itemType
             };
         }
@@ -116,18 +116,6 @@ namespace tikitwo_steam_cleaner.Application.Services
                 default:
                     return null;
             }
-        }
-
-        private string GetDisplaySize(long size)
-        {
-            if(size == 0)
-            {
-                return "0 B";
-            }
-            var magnitude = (int)Math.Log(size, 1024);
-            var adjustedSize = (decimal)size / (1L << (magnitude * 10));
-
-            return $"{adjustedSize:N2} {SizeSuffixes[magnitude]}";
         }
     }
 }
