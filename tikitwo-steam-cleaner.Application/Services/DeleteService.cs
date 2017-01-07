@@ -29,7 +29,7 @@ namespace tikitwo_steam_cleaner.Application.Services
         {
             try
             {
-                Directory.Delete(path);
+                Directory.Delete(path, true);
 
                 return true;
             }

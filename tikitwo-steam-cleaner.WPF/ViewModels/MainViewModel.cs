@@ -183,7 +183,22 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
             {
                 var itemsToDelete = FoldersToDelete.Where(x => x.Selected).ToList();
 
+                if(!itemsToDelete.Any())
+                {
+                    FlexibleMessageBox.Show("You must select some files or folders to delete!");
+
+                    return;
+                }
+
                 var deletedFolders = _steamFolderService.Delete(itemsToDelete);
+
+
+                if (!deletedFolders.Any())
+                {
+                    FlexibleMessageBox.Show("None of your selected items were deleted!");
+
+                    return;
+                }
 
                 var totalSaved = 0L;
                 var builder = new StringBuilder();
@@ -205,7 +220,7 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
 
         private bool CanDeletePackages()
         {
-            return CanUseControls && FoldersToDelete.Any();
+            return CanUseControls && FoldersToDelete.Any() && FoldersToDelete.Any(x => x.Selected);
         }
         #endregion
 
