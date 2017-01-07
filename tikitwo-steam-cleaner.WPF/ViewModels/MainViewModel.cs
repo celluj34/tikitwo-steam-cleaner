@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Prism.Commands;
 using Prism.Mvvm;
 using tikitwo_steam_cleaner.Application.Models;
@@ -66,8 +67,8 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
 
         public int PackagesFound => FoldersToDelete.Count;
 
-        public ObservableCollection<string> FoldersToSearch {get;set;}
-        public ObservableCollection<RedistItem> FoldersToDelete {get;set;}
+        public ObservableCollection<string> FoldersToSearch {get;}
+        public ObservableCollection<RedistItem> FoldersToDelete {get;}
         #endregion
 
         #region Helper Methods
@@ -82,7 +83,7 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
 
         private void AddFolderToDisplay(string newFolder)
         {
-            if((newFolder == null) || FoldersToSearch.Contains(newFolder))
+            if(newFolder == null || FoldersToSearch.Contains(newFolder))
             {
                 return;
             }
@@ -149,7 +150,7 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
 
         private bool CanRemoveFolder()
         {
-            return CanUseControls && FoldersToSearch.Any() && (SelectedFolder != null);
+            return CanUseControls && FoldersToSearch.Any() && SelectedFolder != null;
         }
         #endregion
 
@@ -185,23 +186,28 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
 
                 if(!itemsToDelete.Any())
                 {
-                    FlexibleMessageBox.Show("You must select some files or folders to delete!");
+                    FlexibleMessageBox.Show("You must select some files or folders to delete!",
+                        "No files or folders to delete.",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
 
                     return;
                 }
 
                 var deletedFolders = _steamFolderService.Delete(itemsToDelete);
 
-
-                if (!deletedFolders.Any())
+                if(!deletedFolders.Any())
                 {
-                    FlexibleMessageBox.Show("None of your selected items were deleted!");
+                    FlexibleMessageBox.Show("None of your selected items were deleted!",
+                        "No files or folders deleted.",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
 
                     return;
                 }
 
                 var totalSaved = 0L;
-                var builder = new StringBuilder();
+                var builder = new StringBuilder("Files/Folders deleted:\r\n\r\n");
 
                 deletedFolders.ForEach(x =>
                 {
@@ -209,12 +215,15 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
 
                     totalSaved += x.SizeInBytes;
 
-                    builder.AppendLine($"{x.Path}: DELETED");
+                    builder.AppendLine(x.Path);
                 });
 
                 var size = _sizeService.GetDisplaySize(totalSaved);
 
-                FlexibleMessageBox.Show($"You saved {size}!");
+                FlexibleMessageBox.Show($"You saved {size}!\r\n\r\n{builder}",
+                    "Files or folders were deleted.",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
             });
         }
 

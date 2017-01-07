@@ -101,9 +101,6 @@ namespace tikitwo_steam_cleaner.Flex
 
                 //Try to evaluate the language. If this fails, the fallback language English will be used
                 Enum.TryParse(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName, out _languageId);
-
-                KeyPreview = true;
-                KeyUp += FlexibleMessageBoxForm_KeyUp;
             }
             #endregion
 
@@ -126,12 +123,7 @@ namespace tikitwo_steam_cleaner.Flex
                                             MessageBoxDefaultButton defaultButton)
             {
                 //Create a new instance of the FlexibleMessageBox form
-                var flexibleMessageBoxForm = new FlexibleMessageBoxForm
-                {
-                    ShowInTaskbar = false,
-                    CaptionText = caption,
-                    MessageText = text
-                };
+                var flexibleMessageBoxForm = new FlexibleMessageBoxForm {ShowInTaskbar = false};
 
                 //Bind the caption and the message text
                 flexibleMessageBoxForm._flexibleMessageBoxFormBindingSource.DataSource = flexibleMessageBoxForm;
@@ -217,10 +209,10 @@ namespace tikitwo_steam_cleaner.Flex
                 _richTextBoxMessage.BackColor = Color.White;
                 _richTextBoxMessage.BorderStyle = BorderStyle.None;
                 _richTextBoxMessage.DataBindings.Add(new Binding("Text",
-                                                                _flexibleMessageBoxFormBindingSource,
-                                                                "MessageText",
-                                                                true,
-                                                                DataSourceUpdateMode.OnPropertyChanged));
+                    _flexibleMessageBoxFormBindingSource,
+                    "MessageText",
+                    true,
+                    DataSourceUpdateMode.OnPropertyChanged));
                 _richTextBoxMessage.Font = new Font("Microsoft Sans Serif", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
                 _richTextBoxMessage.Location = new Point(50, 26);
                 _richTextBoxMessage.Margin = new Padding(0);
@@ -322,10 +314,6 @@ namespace tikitwo_steam_cleaner.Flex
 
             #region Private constants
 
-            //These separators are used for the "copy to clipboard" standard operation, triggered by Ctrl + C (behavior and clipboard format is like in a standard MessageBox)
-            private const string StandardMessageboxSeparatorLines = "---------------------------\n";
-            private const string StandardMessageboxSeparatorSpaces = "   ";
-
             //These are the possible buttons (in a standard MessageBox)
             private enum ButtonId
             {
@@ -348,10 +336,8 @@ namespace tikitwo_steam_cleaner.Flex
                 it
             }
 
-            private static readonly string[] ButtonTextsEnglishEn = {"OK", "Cancel", "&Yes", "&No", "&Abort", "&Retry", "&Ignore"};
-
             //Note: This is also the fallback language
-
+            private static readonly string[] ButtonTextsEnglishEn = {"OK", "Cancel", "&Yes", "&No", "&Abort", "&Retry", "&Ignore"};
             private static readonly string[] ButtonTextsGermanDe = {"OK", "Abbrechen", "&Ja", "&Nein", "&Abbrechen", "&Wiederholen", "&Ignorieren"};
             private static readonly string[] ButtonTextsSpanishEs = {"Aceptar", "Cancelar", "&Sí", "&No", "&Abortar", "&Reintentar", "&Ignorar"};
             private static readonly string[] ButtonTextsItalianIt = {"OK", "Annulla", "&Sì", "&No", "&Interrompi", "&Riprova", "&Ignora"};
@@ -459,7 +445,7 @@ namespace tikitwo_steam_cleaner.Flex
                 //First set the bounds for the maximum dialog size
                 flexibleMessageBoxForm.MaximumSize =
                     new Size(Convert.ToInt32(SystemInformation.WorkingArea.Width * GetCorrectedWorkingAreaFactor(MaxWidthFactor)),
-                             Convert.ToInt32(SystemInformation.WorkingArea.Height * GetCorrectedWorkingAreaFactor(MaxHeightFactor)));
+                        Convert.ToInt32(SystemInformation.WorkingArea.Height * GetCorrectedWorkingAreaFactor(MaxHeightFactor)));
 
                 //Get rows. Exit if there are no rows to render...
                 var stringRows = GetStringRows(text);
@@ -508,7 +494,6 @@ namespace tikitwo_steam_cleaner.Flex
                         flexibleMessageBoxForm._pictureBoxForIcon.Image = SystemIcons.Question.ToBitmap();
                         break;
                     default:
-
                         //When no icon is used: Correct placement and width of rich text box.
                         flexibleMessageBoxForm._pictureBoxForIcon.Visible = false;
                         flexibleMessageBoxForm._richTextBoxMessage.Left -= flexibleMessageBoxForm._pictureBoxForIcon.Width;
@@ -656,7 +641,7 @@ namespace tikitwo_steam_cleaner.Flex
                     buttonIndexToFocus = _visibleButtonsCount;
                 }
 
-                switch (buttonIndexToFocus)
+                switch(buttonIndexToFocus)
                 {
                     case 3:
                         buttonToFocus = _button3;
@@ -689,42 +674,6 @@ namespace tikitwo_steam_cleaner.Flex
                     Cursor.Current = Cursors.Default;
                 }
             }
-
-            /// <summary>
-            ///     Handles the KeyUp event of the _richTextBoxMessage control.
-            /// </summary>
-            /// <param name="sender">The source of the event.</param>
-            /// <param name="e">The <see cref="System.Windows.Forms.KeyEventArgs" /> instance containing the event data.</param>
-            private void FlexibleMessageBoxForm_KeyUp(object sender, KeyEventArgs e)
-            {
-                //Handle standard key strikes for clipboard copy: "Ctrl + C" and "Ctrl + Insert"
-                if(e.Control && (e.KeyCode == Keys.C || e.KeyCode == Keys.Insert))
-                {
-                    var buttonsTextLine = (_button1.Visible ? _button1.Text + StandardMessageboxSeparatorSpaces : string.Empty) +
-                                          (_button2.Visible ? _button2.Text + StandardMessageboxSeparatorSpaces : string.Empty) +
-                                          (_button3.Visible ? _button3.Text + StandardMessageboxSeparatorSpaces : string.Empty);
-
-                    //Build same clipboard text like the standard .Net MessageBox
-                    var textForClipboard = StandardMessageboxSeparatorLines + Text + Environment.NewLine + StandardMessageboxSeparatorLines +
-                                           _richTextBoxMessage.Text + Environment.NewLine + StandardMessageboxSeparatorLines +
-                                           buttonsTextLine.Replace("&", string.Empty) + Environment.NewLine + StandardMessageboxSeparatorLines;
-
-                    //Set text in clipboard
-                    Clipboard.SetText(textForClipboard);
-                }
-            }
-            #endregion
-
-            #region Properties (only used for binding)
-            /// <summary>
-            ///     The text that is been used for the heading.
-            /// </summary>
-            public string CaptionText {get;set;}
-
-            /// <summary>
-            ///     The text that is been used in the FlexibleMessageBoxForm.
-            /// </summary>
-            public string MessageText {get;set;}
             #endregion
         } //class FlexibleMessageBoxForm
         #endregion
