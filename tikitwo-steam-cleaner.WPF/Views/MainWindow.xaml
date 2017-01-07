@@ -5,7 +5,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:tikitwo_steam_cleaner.WPF.ViewModels"
     x:Class="tikitwo_steam_cleaner.WPF.Views.MainWindow"
-    mc:Ignorable="d" Title="TikiTwo Steam Cleaner" Width="500" MinWidth="500" Height="500" MinHeight="500">
+    mc:Ignorable="d" Title="TikiTwo Steam Cleaner" Width="640" MinWidth="640" Height="480" MinHeight="480">
 
     <Window.DataContext>
         <viewModels:MainViewModel />
@@ -63,7 +63,13 @@
                 <DataGrid Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" Margin="5" MinHeight="140" ItemsSource="{Binding FoldersToDelete}" SelectionMode="Single"
                           AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeRows="False">
                     <DataGrid.Columns>
-                        <DataGridCheckBoxColumn Width="Auto" Binding="{Binding Selected}" Header="Selected" IsReadOnly="False" />
+                        <DataGridTemplateColumn Width="Auto" Header="Selected" IsReadOnly="False">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox IsChecked="{Binding Selected, UpdateSourceTrigger=PropertyChanged}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
                         <DataGridTextColumn Width="Auto" Binding="{Binding Path}" Header="Path" IsReadOnly="True" />
                         <DataGridTextColumn Width="Auto" Binding="{Binding DisplaySize}" Header="Size" IsReadOnly="True" SortMemberPath="SizeInBytes" />
                         <DataGridTextColumn Width="*" Binding="{Binding DisplayType}" Header="Type" IsReadOnly="True" />
