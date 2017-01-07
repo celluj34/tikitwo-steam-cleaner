@@ -47,7 +47,7 @@ namespace tikitwo_steam_cleaner.Application.Services
         {
             var redistFiles =
                 allFolders.AsParallel()
-                          .Where(allFolder => !redistFolders.Any(redistFolder => allFolder.StartsWith(redistFolder.Path)))
+                          .Where(folder => !redistFolders.Any(redistFolder => folder.StartsWith(redistFolder.Path)))
                           .Select(GetRedistFilesInFolder)
                           .SelectMany(x => x)
                           .Select(y => new {Path = y, Size = _sizeService.GetFileSize(y)})
@@ -92,15 +92,10 @@ namespace tikitwo_steam_cleaner.Application.Services
 
         private RedistItem GenerateRedistItem(string path, long size, ItemTypeEnum itemType)
         {
-            return new RedistItem
-            {
-                Path = path,
-                Selected = true,
-                SizeInBytes = size,
-                DisplayType = GetDisplayType(path, itemType),
-                DisplaySize = _sizeService.GetDisplaySize(size),
-                ItemType = itemType
-            };
+            var displayType = GetDisplayType(path, itemType);
+            var displaySize = _sizeService.GetDisplaySize(size);
+
+            return new RedistItem(path, size, displayType, displaySize, itemType);
         }
 
         private string GetDisplayType(string path, ItemTypeEnum itemType)
