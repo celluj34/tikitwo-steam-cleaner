@@ -1,11 +1,8 @@
 ﻿<Window
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:viewModels="clr-namespace:tikitwo_steam_cleaner.WPF.ViewModels"
-    x:Class="tikitwo_steam_cleaner.WPF.Views.MainWindow"
-    mc:Ignorable="d" Title="TikiTwo Steam Cleaner" Width="640" MinWidth="640" Height="480" MinHeight="480">
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="clr-namespace:tikitwo_steam_cleaner.WPF.ViewModels" x:Class="tikitwo_steam_cleaner.WPF.Views.MainWindow" mc:Ignorable="d" Title="TikiTwo Steam Cleaner"
+    Width="640" MinWidth="640" Height="480" MinHeight="480" WindowStartupLocation="CenterScreen">
 
     <Window.DataContext>
         <viewModels:MainViewModel />
