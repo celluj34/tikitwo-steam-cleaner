@@ -185,17 +185,21 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
 
                 var deletedFolders = _steamFolderService.Delete(itemsToDelete);
 
-                long totalSaved = 0;
+                var totalSaved = 0L;
+                var builder = new StringBuilder();
+
                 deletedFolders.ForEach(x =>
                 {
                     System.Windows.Application.Current.Dispatcher.Invoke(() => FoldersToDelete.Remove(x));
 
                     totalSaved += x.SizeInBytes;
+
+                    builder.AppendLine($"{x.Path}: DELETED");
                 });
 
                 var size = _sizeService.GetDisplaySize(totalSaved);
 
-                FlexibleMessageBox.Show("You saved " + size + "!");
+                FlexibleMessageBox.Show($"You saved {size}!");
             });
         }
 

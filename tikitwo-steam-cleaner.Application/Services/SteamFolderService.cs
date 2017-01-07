@@ -38,6 +38,7 @@ namespace tikitwo_steam_cleaner.Application.Services
     public class SteamFolderService : ISteamFolderService
     {
         private readonly IApplicationSettings _applicationSettings;
+        private readonly IDeleteService _deleteService;
         private readonly IDirectoryService _directoryService;
         private readonly ILogicalDriveService _logicalDriveService;
         private readonly IRedistFileService _redistFileService;
@@ -45,12 +46,14 @@ namespace tikitwo_steam_cleaner.Application.Services
         public SteamFolderService(IApplicationSettings applicationSettings,
                                   ILogicalDriveService logicalDriveService,
                                   IRedistFileService redistFileService,
-                                  IDirectoryService directoryService)
+                                  IDirectoryService directoryService,
+                                  IDeleteService deleteService)
         {
             _applicationSettings = applicationSettings;
             _logicalDriveService = logicalDriveService;
             _redistFileService = redistFileService;
             _directoryService = directoryService;
+            _deleteService = deleteService;
         }
 
         #region ISteamFolderService Members
@@ -61,7 +64,7 @@ namespace tikitwo_steam_cleaner.Application.Services
             //cross-join all logical drives with all programFileLocations
             var steamFolder =
                 logicalDrives.SelectMany(drive => _applicationSettings.ProgramFileLocations,
-                                         (drive, folder) => Path.Combine(drive, folder, _applicationSettings.SteamFolder))
+                                 (drive, folder) => Path.Combine(drive, folder, _applicationSettings.SteamFolder))
                              .Where(_directoryService.FolderExists)
                              .ToList();
 
@@ -78,18 +81,35 @@ namespace tikitwo_steam_cleaner.Application.Services
 
         public List<RedistItem> Search(List<string> foldersToSearch)
         {
-            return foldersToSearch.Distinct().AsParallel().Where(x => _directoryService.FolderExists(x)).SelectMany(GetRedistItemsForFolder).ToList();
+            return
+                foldersToSearch.Distinct()
+                               .AsParallel()
+                               .Where(x => _directoryService.FolderExists(x))
+                               .SelectMany(GetRedistItemsForFolder)
+                               .ToList();
         }
 
         public List<RedistItem> Delete(List<RedistItem> itemsToDelete)
         {
-            return
-                itemsToDelete.Select(x => new {ItemToDelete = x, Success = _directoryService.Delete(x)})
-                             .Where(y => y.Success)
-                             .Select(z => z.ItemToDelete)
-                             .ToList();
+            return itemsToDelete.AsParallel().Select(Delete).Where(x => x.Deleted).ToList();
         }
         #endregion
+
+        private RedistItem Delete(RedistItem item)
+        {
+            switch(item.ItemType)
+            {
+                case ItemTypeEnum.Folder:
+                    item.Deleted = _deleteService.DeleteFolder(item.Path);
+                    break;
+
+                case ItemTypeEnum.File:
+                    item.Deleted = _deleteService.DeleteFile(item.Path);
+                    break;
+            }
+
+            return item;
+        }
 
         private List<RedistItem> GetRedistItemsForFolder(string folder)
         {

@@ -8,5 +8,6 @@
         public string DisplaySize {get;set;}
         public string DisplayType {get;set;}
         public ItemTypeEnum ItemType {get;set;}
+        public bool Deleted {get;set;}
     }
 }

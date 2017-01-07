@@ -46,6 +46,7 @@
     <Compile Include="Models\RedistItem.cs" />
     <Compile Include="Models\ItemTypeEnum.cs" />
     <Compile Include="Services\ApplicationSettings.cs" />
+    <Compile Include="Services\DeleteService.cs" />
     <Compile Include="Services\DirectoryService.cs" />
     <Compile Include="Services\LogicalDriveService.cs" />
     <Compile Include="Services\RedistFileService.cs" />

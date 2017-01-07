@@ -45,7 +45,13 @@ namespace tikitwo_steam_cleaner.Application.Services
 
         public long GetFolderSize(string folder)
         {
-            return Directory.EnumerateFiles(folder, "*", SearchOption.AllDirectories).Select(y => new FileInfo(y)).Select(z => z.Length).DefaultIfEmpty(0).Sum();
+            return
+                Directory.EnumerateFiles(folder, "*", SearchOption.AllDirectories)
+                         .AsParallel()
+                         .Select(x => new FileInfo(x))
+                         .Select(x => x.Length)
+                         .DefaultIfEmpty(0)
+                         .Sum();
         }
         #endregion
     }
