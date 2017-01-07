@@ -100,7 +100,7 @@ namespace tikitwo_steam_cleaner.Flex
                 InitializeComponent();
 
                 //Try to evaluate the language. If this fails, the fallback language English will be used
-                Enum.TryParse(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName, out languageID);
+                Enum.TryParse(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName, out _languageId);
 
                 KeyPreview = true;
                 KeyUp += FlexibleMessageBoxForm_KeyUp;
@@ -126,13 +126,15 @@ namespace tikitwo_steam_cleaner.Flex
                                             MessageBoxDefaultButton defaultButton)
             {
                 //Create a new instance of the FlexibleMessageBox form
-                var flexibleMessageBoxForm = new FlexibleMessageBoxForm();
-                flexibleMessageBoxForm.ShowInTaskbar = false;
+                var flexibleMessageBoxForm = new FlexibleMessageBoxForm
+                {
+                    ShowInTaskbar = false,
+                    CaptionText = caption,
+                    MessageText = text
+                };
 
                 //Bind the caption and the message text
-                flexibleMessageBoxForm.CaptionText = caption;
-                flexibleMessageBoxForm.MessageText = text;
-                flexibleMessageBoxForm.FlexibleMessageBoxFormBindingSource.DataSource = flexibleMessageBoxForm;
+                flexibleMessageBoxForm._flexibleMessageBoxFormBindingSource.DataSource = flexibleMessageBoxForm;
 
                 //Set the buttons visibilities and texts. Also set a default button.
                 SetDialogButtons(flexibleMessageBoxForm, buttons, defaultButton);
@@ -141,8 +143,8 @@ namespace tikitwo_steam_cleaner.Flex
                 SetDialogIcon(flexibleMessageBoxForm, icon);
 
                 //Set the font for all controls
-                flexibleMessageBoxForm.Font = FONT;
-                flexibleMessageBoxForm.richTextBoxMessage.Font = FONT;
+                flexibleMessageBoxForm.Font = FlexibleMessageBox.Font;
+                flexibleMessageBoxForm._richTextBoxMessage.Font = FlexibleMessageBox.Font;
 
                 //Calculate the dialogs start size (Try to auto-size width to show longest text row). Also set the maximum dialog size. 
                 SetDialogSizes(flexibleMessageBoxForm, text, caption);
@@ -167,9 +169,9 @@ namespace tikitwo_steam_cleaner.Flex
             /// <param name="disposing">True, wenn verwaltete Ressourcen gelöscht werden sollen; andernfalls False.</param>
             protected override void Dispose(bool disposing)
             {
-                if(disposing && (components != null))
+                if(disposing)
                 {
-                    components.Dispose();
+                    components?.Dispose();
                 }
                 base.Dispose(disposing);
             }
@@ -181,106 +183,106 @@ namespace tikitwo_steam_cleaner.Flex
             private void InitializeComponent()
             {
                 components = new Container();
-                button1 = new Button();
-                richTextBoxMessage = new RichTextBox();
-                FlexibleMessageBoxFormBindingSource = new BindingSource(components);
-                panel1 = new Panel();
-                pictureBoxForIcon = new PictureBox();
-                button2 = new Button();
-                button3 = new Button();
-                ((ISupportInitialize)FlexibleMessageBoxFormBindingSource).BeginInit();
-                panel1.SuspendLayout();
-                ((ISupportInitialize)pictureBoxForIcon).BeginInit();
+                _button1 = new Button();
+                _richTextBoxMessage = new RichTextBox();
+                _flexibleMessageBoxFormBindingSource = new BindingSource(components);
+                _panel1 = new Panel();
+                _pictureBoxForIcon = new PictureBox();
+                _button2 = new Button();
+                _button3 = new Button();
+                ((ISupportInitialize)_flexibleMessageBoxFormBindingSource).BeginInit();
+                _panel1.SuspendLayout();
+                ((ISupportInitialize)_pictureBoxForIcon).BeginInit();
                 SuspendLayout();
 
                 // 
-                // button1
+                // _button1
                 // 
-                button1.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-                button1.AutoSize = true;
-                button1.DialogResult = DialogResult.OK;
-                button1.Location = new Point(11, 67);
-                button1.MinimumSize = new Size(0, 24);
-                button1.Name = "button1";
-                button1.Size = new Size(75, 24);
-                button1.TabIndex = 2;
-                button1.Text = "OK";
-                button1.UseVisualStyleBackColor = true;
-                button1.Visible = false;
+                _button1.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+                _button1.AutoSize = true;
+                _button1.DialogResult = DialogResult.OK;
+                _button1.Location = new Point(11, 67);
+                _button1.MinimumSize = new Size(0, 24);
+                _button1.Name = "_button1";
+                _button1.Size = new Size(75, 24);
+                _button1.TabIndex = 2;
+                _button1.Text = "OK";
+                _button1.UseVisualStyleBackColor = true;
+                _button1.Visible = false;
 
                 // 
-                // richTextBoxMessage
+                // _richTextBoxMessage
                 // 
-                richTextBoxMessage.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-                richTextBoxMessage.BackColor = Color.White;
-                richTextBoxMessage.BorderStyle = BorderStyle.None;
-                richTextBoxMessage.DataBindings.Add(new Binding("Text",
-                                                                FlexibleMessageBoxFormBindingSource,
+                _richTextBoxMessage.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+                _richTextBoxMessage.BackColor = Color.White;
+                _richTextBoxMessage.BorderStyle = BorderStyle.None;
+                _richTextBoxMessage.DataBindings.Add(new Binding("Text",
+                                                                _flexibleMessageBoxFormBindingSource,
                                                                 "MessageText",
                                                                 true,
                                                                 DataSourceUpdateMode.OnPropertyChanged));
-                richTextBoxMessage.Font = new Font("Microsoft Sans Serif", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-                richTextBoxMessage.Location = new Point(50, 26);
-                richTextBoxMessage.Margin = new Padding(0);
-                richTextBoxMessage.Name = "richTextBoxMessage";
-                richTextBoxMessage.ReadOnly = true;
-                richTextBoxMessage.ScrollBars = RichTextBoxScrollBars.Vertical;
-                richTextBoxMessage.Size = new Size(200, 20);
-                richTextBoxMessage.TabIndex = 0;
-                richTextBoxMessage.TabStop = false;
-                richTextBoxMessage.Text = "<Message>";
-                richTextBoxMessage.LinkClicked += richTextBoxMessage_LinkClicked;
+                _richTextBoxMessage.Font = new Font("Microsoft Sans Serif", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+                _richTextBoxMessage.Location = new Point(50, 26);
+                _richTextBoxMessage.Margin = new Padding(0);
+                _richTextBoxMessage.Name = "_richTextBoxMessage";
+                _richTextBoxMessage.ReadOnly = true;
+                _richTextBoxMessage.ScrollBars = RichTextBoxScrollBars.Vertical;
+                _richTextBoxMessage.Size = new Size(200, 20);
+                _richTextBoxMessage.TabIndex = 0;
+                _richTextBoxMessage.TabStop = false;
+                _richTextBoxMessage.Text = "<Message>";
+                _richTextBoxMessage.LinkClicked += RichTextBoxMessage_LinkClicked;
 
                 // 
-                // panel1
+                // _panel1
                 // 
-                panel1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-                panel1.BackColor = Color.White;
-                panel1.Controls.Add(pictureBoxForIcon);
-                panel1.Controls.Add(richTextBoxMessage);
-                panel1.Location = new Point(-3, -4);
-                panel1.Name = "panel1";
-                panel1.Size = new Size(268, 59);
-                panel1.TabIndex = 1;
+                _panel1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+                _panel1.BackColor = Color.White;
+                _panel1.Controls.Add(_pictureBoxForIcon);
+                _panel1.Controls.Add(_richTextBoxMessage);
+                _panel1.Location = new Point(-3, -4);
+                _panel1.Name = "_panel1";
+                _panel1.Size = new Size(268, 59);
+                _panel1.TabIndex = 1;
 
                 // 
-                // pictureBoxForIcon
+                // _pictureBoxForIcon
                 // 
-                pictureBoxForIcon.BackColor = Color.Transparent;
-                pictureBoxForIcon.Location = new Point(15, 19);
-                pictureBoxForIcon.Name = "pictureBoxForIcon";
-                pictureBoxForIcon.Size = new Size(32, 32);
-                pictureBoxForIcon.TabIndex = 8;
-                pictureBoxForIcon.TabStop = false;
+                _pictureBoxForIcon.BackColor = Color.Transparent;
+                _pictureBoxForIcon.Location = new Point(15, 19);
+                _pictureBoxForIcon.Name = "_pictureBoxForIcon";
+                _pictureBoxForIcon.Size = new Size(32, 32);
+                _pictureBoxForIcon.TabIndex = 8;
+                _pictureBoxForIcon.TabStop = false;
 
                 // 
-                // button2
+                // _button2
                 // 
-                button2.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-                button2.DialogResult = DialogResult.OK;
-                button2.Location = new Point(92, 67);
-                button2.MinimumSize = new Size(0, 24);
-                button2.Name = "button2";
-                button2.Size = new Size(75, 24);
-                button2.TabIndex = 3;
-                button2.Text = "OK";
-                button2.UseVisualStyleBackColor = true;
-                button2.Visible = false;
+                _button2.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+                _button2.DialogResult = DialogResult.OK;
+                _button2.Location = new Point(92, 67);
+                _button2.MinimumSize = new Size(0, 24);
+                _button2.Name = "_button2";
+                _button2.Size = new Size(75, 24);
+                _button2.TabIndex = 3;
+                _button2.Text = "OK";
+                _button2.UseVisualStyleBackColor = true;
+                _button2.Visible = false;
 
                 // 
-                // button3
+                // _button3
                 // 
-                button3.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-                button3.AutoSize = true;
-                button3.DialogResult = DialogResult.OK;
-                button3.Location = new Point(173, 67);
-                button3.MinimumSize = new Size(0, 24);
-                button3.Name = "button3";
-                button3.Size = new Size(75, 24);
-                button3.TabIndex = 0;
-                button3.Text = "OK";
-                button3.UseVisualStyleBackColor = true;
-                button3.Visible = false;
+                _button3.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+                _button3.AutoSize = true;
+                _button3.DialogResult = DialogResult.OK;
+                _button3.Location = new Point(173, 67);
+                _button3.MinimumSize = new Size(0, 24);
+                _button3.Name = "_button3";
+                _button3.Size = new Size(75, 24);
+                _button3.TabIndex = 0;
+                _button3.Text = "OK";
+                _button3.UseVisualStyleBackColor = true;
+                _button3.Visible = false;
 
                 // 
                 // FlexibleMessageBoxForm
@@ -288,11 +290,11 @@ namespace tikitwo_steam_cleaner.Flex
                 AutoScaleDimensions = new SizeF(6F, 13F);
                 AutoScaleMode = AutoScaleMode.Font;
                 ClientSize = new Size(260, 102);
-                Controls.Add(button3);
-                Controls.Add(button2);
-                Controls.Add(panel1);
-                Controls.Add(button1);
-                DataBindings.Add(new Binding("Text", FlexibleMessageBoxFormBindingSource, "CaptionText", true));
+                Controls.Add(_button3);
+                Controls.Add(_button2);
+                Controls.Add(_panel1);
+                Controls.Add(_button1);
+                DataBindings.Add(new Binding("Text", _flexibleMessageBoxFormBindingSource, "CaptionText", true));
                 MaximizeBox = false;
                 MinimizeBox = false;
                 MinimumSize = new Size(276, 140);
@@ -302,30 +304,30 @@ namespace tikitwo_steam_cleaner.Flex
                 StartPosition = FormStartPosition.CenterParent;
                 Text = "<Caption>";
                 Shown += FlexibleMessageBoxForm_Shown;
-                ((ISupportInitialize)FlexibleMessageBoxFormBindingSource).EndInit();
-                panel1.ResumeLayout(false);
-                ((ISupportInitialize)pictureBoxForIcon).EndInit();
+                ((ISupportInitialize)_flexibleMessageBoxFormBindingSource).EndInit();
+                _panel1.ResumeLayout(false);
+                ((ISupportInitialize)_pictureBoxForIcon).EndInit();
                 ResumeLayout(false);
                 PerformLayout();
             }
 
-            private Button button1;
-            private BindingSource FlexibleMessageBoxFormBindingSource;
-            private RichTextBox richTextBoxMessage;
-            private Panel panel1;
-            private PictureBox pictureBoxForIcon;
-            private Button button2;
-            private Button button3;
+            private Button _button1;
+            private BindingSource _flexibleMessageBoxFormBindingSource;
+            private RichTextBox _richTextBoxMessage;
+            private Panel _panel1;
+            private PictureBox _pictureBoxForIcon;
+            private Button _button2;
+            private Button _button3;
             #endregion
 
             #region Private constants
 
             //These separators are used for the "copy to clipboard" standard operation, triggered by Ctrl + C (behavior and clipboard format is like in a standard MessageBox)
-            private static readonly string STANDARD_MESSAGEBOX_SEPARATOR_LINES = "---------------------------\n";
-            private static readonly string STANDARD_MESSAGEBOX_SEPARATOR_SPACES = "   ";
+            private const string StandardMessageboxSeparatorLines = "---------------------------\n";
+            private const string StandardMessageboxSeparatorSpaces = "   ";
 
             //These are the possible buttons (in a standard MessageBox)
-            private enum ButtonID
+            private enum ButtonId
             {
                 OK = 0,
                 CANCEL,
@@ -338,7 +340,7 @@ namespace tikitwo_steam_cleaner.Flex
 
             //These are the buttons texts for different languages. 
             //If you want to add a new language, add it here and in the GetButtonText-Function
-            private enum TwoLetterISOLanguageID
+            private enum TwoLetterIsoLanguageId
             {
                 en,
                 de,
@@ -346,19 +348,19 @@ namespace tikitwo_steam_cleaner.Flex
                 it
             }
 
-            private static readonly string[] BUTTON_TEXTS_ENGLISH_EN = {"OK", "Cancel", "&Yes", "&No", "&Abort", "&Retry", "&Ignore"};
+            private static readonly string[] ButtonTextsEnglishEn = {"OK", "Cancel", "&Yes", "&No", "&Abort", "&Retry", "&Ignore"};
 
             //Note: This is also the fallback language
 
-            private static readonly string[] BUTTON_TEXTS_GERMAN_DE = {"OK", "Abbrechen", "&Ja", "&Nein", "&Abbrechen", "&Wiederholen", "&Ignorieren"};
-            private static readonly string[] BUTTON_TEXTS_SPANISH_ES = {"Aceptar", "Cancelar", "&Sí", "&No", "&Abortar", "&Reintentar", "&Ignorar"};
-            private static readonly string[] BUTTON_TEXTS_ITALIAN_IT = {"OK", "Annulla", "&Sì", "&No", "&Interrompi", "&Riprova", "&Ignora"};
+            private static readonly string[] ButtonTextsGermanDe = {"OK", "Abbrechen", "&Ja", "&Nein", "&Abbrechen", "&Wiederholen", "&Ignorieren"};
+            private static readonly string[] ButtonTextsSpanishEs = {"Aceptar", "Cancelar", "&Sí", "&No", "&Abortar", "&Reintentar", "&Ignorar"};
+            private static readonly string[] ButtonTextsItalianIt = {"OK", "Annulla", "&Sì", "&No", "&Interrompi", "&Riprova", "&Ignora"};
             #endregion
 
             #region Private members
-            private MessageBoxDefaultButton defaultButton;
-            private int visibleButtonsCount;
-            private readonly TwoLetterISOLanguageID languageID = TwoLetterISOLanguageID.en;
+            private MessageBoxDefaultButton _defaultButton;
+            private int _visibleButtonsCount;
+            private readonly TwoLetterIsoLanguageId _languageId;
             #endregion
 
             #region Private helper functions
@@ -382,23 +384,24 @@ namespace tikitwo_steam_cleaner.Flex
             ///     Gets the button text for the CurrentUICulture language.
             ///     Note: The fallback language is English
             /// </summary>
-            /// <param name="buttonID">The ID of the button.</param>
+            /// <param name="buttonId">The ID of the button.</param>
             /// <returns>The button text</returns>
-            private string GetButtonText(ButtonID buttonID)
+            private string GetButtonText(ButtonId buttonId)
             {
-                var buttonTextArrayIndex = Convert.ToInt32(buttonID);
+                var buttonTextArrayIndex = Convert.ToInt32(buttonId);
 
-                switch(languageID)
+                switch(_languageId)
                 {
-                    case TwoLetterISOLanguageID.de:
-                        return BUTTON_TEXTS_GERMAN_DE[buttonTextArrayIndex];
-                    case TwoLetterISOLanguageID.es:
-                        return BUTTON_TEXTS_SPANISH_ES[buttonTextArrayIndex];
-                    case TwoLetterISOLanguageID.it:
-                        return BUTTON_TEXTS_ITALIAN_IT[buttonTextArrayIndex];
-
+                    case TwoLetterIsoLanguageId.en:
+                        return ButtonTextsEnglishEn[buttonTextArrayIndex];
+                    case TwoLetterIsoLanguageId.de:
+                        return ButtonTextsGermanDe[buttonTextArrayIndex];
+                    case TwoLetterIsoLanguageId.es:
+                        return ButtonTextsSpanishEs[buttonTextArrayIndex];
+                    case TwoLetterIsoLanguageId.it:
+                        return ButtonTextsItalianIt[buttonTextArrayIndex];
                     default:
-                        return BUTTON_TEXTS_ENGLISH_EN[buttonTextArrayIndex];
+                        return ButtonTextsEnglishEn[buttonTextArrayIndex];
                 }
             }
 
@@ -411,16 +414,16 @@ namespace tikitwo_steam_cleaner.Flex
             /// <returns>The corrected given working area factor.</returns>
             private static double GetCorrectedWorkingAreaFactor(double workingAreaFactor)
             {
-                const double MIN_FACTOR = 0.2;
-                const double MAX_FACTOR = 1.0;
+                const double minFactor = 0.2;
+                const double maxFactor = 1.0;
 
-                if(workingAreaFactor < MIN_FACTOR)
+                if(workingAreaFactor < minFactor)
                 {
-                    return MIN_FACTOR;
+                    return minFactor;
                 }
-                if(workingAreaFactor > MAX_FACTOR)
+                if(workingAreaFactor > maxFactor)
                 {
-                    return MAX_FACTOR;
+                    return maxFactor;
                 }
 
                 return workingAreaFactor;
@@ -450,13 +453,13 @@ namespace tikitwo_steam_cleaner.Flex
             /// </summary>
             /// <param name="flexibleMessageBoxForm">The FlexibleMessageBox dialog.</param>
             /// <param name="text">The text (the longest text row is used to calculate the dialog width).</param>
-            /// <param name="text">The caption (this can also affect the dialog width).</param>
+            /// <param name="caption">The caption (this can also affect the dialog width).</param>
             private static void SetDialogSizes(FlexibleMessageBoxForm flexibleMessageBoxForm, string text, string caption)
             {
                 //First set the bounds for the maximum dialog size
                 flexibleMessageBoxForm.MaximumSize =
-                    new Size(Convert.ToInt32(SystemInformation.WorkingArea.Width * GetCorrectedWorkingAreaFactor(MAX_WIDTH_FACTOR)),
-                             Convert.ToInt32(SystemInformation.WorkingArea.Height * GetCorrectedWorkingAreaFactor(MAX_HEIGHT_FACTOR)));
+                    new Size(Convert.ToInt32(SystemInformation.WorkingArea.Width * GetCorrectedWorkingAreaFactor(MaxWidthFactor)),
+                             Convert.ToInt32(SystemInformation.WorkingArea.Height * GetCorrectedWorkingAreaFactor(MaxHeightFactor)));
 
                 //Get rows. Exit if there are no rows to render...
                 var stringRows = GetStringRows(text);
@@ -466,17 +469,17 @@ namespace tikitwo_steam_cleaner.Flex
                 }
 
                 //Calculate whole text height
-                var textHeight = TextRenderer.MeasureText(text, FONT).Height;
+                var textHeight = TextRenderer.MeasureText(text, FlexibleMessageBox.Font).Height;
 
                 //Calculate width for longest text line
-                const int SCROLLBAR_WIDTH_OFFSET = 15;
-                var longestTextRowWidth = stringRows.Max(textForRow => TextRenderer.MeasureText(textForRow, FONT).Width);
+                const int scrollbarWidthOffset = 15;
+                var longestTextRowWidth = stringRows.Max(textForRow => TextRenderer.MeasureText(textForRow, FlexibleMessageBox.Font).Width);
                 var captionWidth = TextRenderer.MeasureText(caption, SystemFonts.CaptionFont).Width;
-                var textWidth = Math.Max(longestTextRowWidth + SCROLLBAR_WIDTH_OFFSET, captionWidth);
+                var textWidth = Math.Max(longestTextRowWidth + scrollbarWidthOffset, captionWidth);
 
                 //Calculate margins
-                var marginWidth = flexibleMessageBoxForm.Width - flexibleMessageBoxForm.richTextBoxMessage.Width;
-                var marginHeight = flexibleMessageBoxForm.Height - flexibleMessageBoxForm.richTextBoxMessage.Height;
+                var marginWidth = flexibleMessageBoxForm.Width - flexibleMessageBoxForm._richTextBoxMessage.Width;
+                var marginHeight = flexibleMessageBoxForm.Height - flexibleMessageBoxForm._richTextBoxMessage.Height;
 
                 //Set calculated dialog size (if the calculated values exceed the maximums, they were cut by windows forms automatically)
                 flexibleMessageBoxForm.Size = new Size(textWidth + marginWidth, textHeight + marginHeight);
@@ -493,23 +496,23 @@ namespace tikitwo_steam_cleaner.Flex
                 switch(icon)
                 {
                     case MessageBoxIcon.Information:
-                        flexibleMessageBoxForm.pictureBoxForIcon.Image = SystemIcons.Information.ToBitmap();
+                        flexibleMessageBoxForm._pictureBoxForIcon.Image = SystemIcons.Information.ToBitmap();
                         break;
                     case MessageBoxIcon.Warning:
-                        flexibleMessageBoxForm.pictureBoxForIcon.Image = SystemIcons.Warning.ToBitmap();
+                        flexibleMessageBoxForm._pictureBoxForIcon.Image = SystemIcons.Warning.ToBitmap();
                         break;
                     case MessageBoxIcon.Error:
-                        flexibleMessageBoxForm.pictureBoxForIcon.Image = SystemIcons.Error.ToBitmap();
+                        flexibleMessageBoxForm._pictureBoxForIcon.Image = SystemIcons.Error.ToBitmap();
                         break;
                     case MessageBoxIcon.Question:
-                        flexibleMessageBoxForm.pictureBoxForIcon.Image = SystemIcons.Question.ToBitmap();
+                        flexibleMessageBoxForm._pictureBoxForIcon.Image = SystemIcons.Question.ToBitmap();
                         break;
                     default:
 
                         //When no icon is used: Correct placement and width of rich text box.
-                        flexibleMessageBoxForm.pictureBoxForIcon.Visible = false;
-                        flexibleMessageBoxForm.richTextBoxMessage.Left -= flexibleMessageBoxForm.pictureBoxForIcon.Width;
-                        flexibleMessageBoxForm.richTextBoxMessage.Width += flexibleMessageBoxForm.pictureBoxForIcon.Width;
+                        flexibleMessageBoxForm._pictureBoxForIcon.Visible = false;
+                        flexibleMessageBoxForm._richTextBoxMessage.Left -= flexibleMessageBoxForm._pictureBoxForIcon.Width;
+                        flexibleMessageBoxForm._richTextBoxMessage.Width += flexibleMessageBoxForm._pictureBoxForIcon.Width;
                         break;
                 }
             }
@@ -527,96 +530,96 @@ namespace tikitwo_steam_cleaner.Flex
                 switch(buttons)
                 {
                     case MessageBoxButtons.AbortRetryIgnore:
-                        flexibleMessageBoxForm.visibleButtonsCount = 3;
+                        flexibleMessageBoxForm._visibleButtonsCount = 3;
 
-                        flexibleMessageBoxForm.button1.Visible = true;
-                        flexibleMessageBoxForm.button1.Text = flexibleMessageBoxForm.GetButtonText(ButtonID.ABORT);
-                        flexibleMessageBoxForm.button1.DialogResult = DialogResult.Abort;
+                        flexibleMessageBoxForm._button1.Visible = true;
+                        flexibleMessageBoxForm._button1.Text = flexibleMessageBoxForm.GetButtonText(ButtonId.ABORT);
+                        flexibleMessageBoxForm._button1.DialogResult = DialogResult.Abort;
 
-                        flexibleMessageBoxForm.button2.Visible = true;
-                        flexibleMessageBoxForm.button2.Text = flexibleMessageBoxForm.GetButtonText(ButtonID.RETRY);
-                        flexibleMessageBoxForm.button2.DialogResult = DialogResult.Retry;
+                        flexibleMessageBoxForm._button2.Visible = true;
+                        flexibleMessageBoxForm._button2.Text = flexibleMessageBoxForm.GetButtonText(ButtonId.RETRY);
+                        flexibleMessageBoxForm._button2.DialogResult = DialogResult.Retry;
 
-                        flexibleMessageBoxForm.button3.Visible = true;
-                        flexibleMessageBoxForm.button3.Text = flexibleMessageBoxForm.GetButtonText(ButtonID.IGNORE);
-                        flexibleMessageBoxForm.button3.DialogResult = DialogResult.Ignore;
+                        flexibleMessageBoxForm._button3.Visible = true;
+                        flexibleMessageBoxForm._button3.Text = flexibleMessageBoxForm.GetButtonText(ButtonId.IGNORE);
+                        flexibleMessageBoxForm._button3.DialogResult = DialogResult.Ignore;
 
                         flexibleMessageBoxForm.ControlBox = false;
                         break;
 
                     case MessageBoxButtons.OKCancel:
-                        flexibleMessageBoxForm.visibleButtonsCount = 2;
+                        flexibleMessageBoxForm._visibleButtonsCount = 2;
 
-                        flexibleMessageBoxForm.button2.Visible = true;
-                        flexibleMessageBoxForm.button2.Text = flexibleMessageBoxForm.GetButtonText(ButtonID.OK);
-                        flexibleMessageBoxForm.button2.DialogResult = DialogResult.OK;
+                        flexibleMessageBoxForm._button2.Visible = true;
+                        flexibleMessageBoxForm._button2.Text = flexibleMessageBoxForm.GetButtonText(ButtonId.OK);
+                        flexibleMessageBoxForm._button2.DialogResult = DialogResult.OK;
 
-                        flexibleMessageBoxForm.button3.Visible = true;
-                        flexibleMessageBoxForm.button3.Text = flexibleMessageBoxForm.GetButtonText(ButtonID.CANCEL);
-                        flexibleMessageBoxForm.button3.DialogResult = DialogResult.Cancel;
+                        flexibleMessageBoxForm._button3.Visible = true;
+                        flexibleMessageBoxForm._button3.Text = flexibleMessageBoxForm.GetButtonText(ButtonId.CANCEL);
+                        flexibleMessageBoxForm._button3.DialogResult = DialogResult.Cancel;
 
-                        flexibleMessageBoxForm.CancelButton = flexibleMessageBoxForm.button3;
+                        flexibleMessageBoxForm.CancelButton = flexibleMessageBoxForm._button3;
                         break;
 
                     case MessageBoxButtons.RetryCancel:
-                        flexibleMessageBoxForm.visibleButtonsCount = 2;
+                        flexibleMessageBoxForm._visibleButtonsCount = 2;
 
-                        flexibleMessageBoxForm.button2.Visible = true;
-                        flexibleMessageBoxForm.button2.Text = flexibleMessageBoxForm.GetButtonText(ButtonID.RETRY);
-                        flexibleMessageBoxForm.button2.DialogResult = DialogResult.Retry;
+                        flexibleMessageBoxForm._button2.Visible = true;
+                        flexibleMessageBoxForm._button2.Text = flexibleMessageBoxForm.GetButtonText(ButtonId.RETRY);
+                        flexibleMessageBoxForm._button2.DialogResult = DialogResult.Retry;
 
-                        flexibleMessageBoxForm.button3.Visible = true;
-                        flexibleMessageBoxForm.button3.Text = flexibleMessageBoxForm.GetButtonText(ButtonID.CANCEL);
-                        flexibleMessageBoxForm.button3.DialogResult = DialogResult.Cancel;
+                        flexibleMessageBoxForm._button3.Visible = true;
+                        flexibleMessageBoxForm._button3.Text = flexibleMessageBoxForm.GetButtonText(ButtonId.CANCEL);
+                        flexibleMessageBoxForm._button3.DialogResult = DialogResult.Cancel;
 
-                        flexibleMessageBoxForm.CancelButton = flexibleMessageBoxForm.button3;
+                        flexibleMessageBoxForm.CancelButton = flexibleMessageBoxForm._button3;
                         break;
 
                     case MessageBoxButtons.YesNo:
-                        flexibleMessageBoxForm.visibleButtonsCount = 2;
+                        flexibleMessageBoxForm._visibleButtonsCount = 2;
 
-                        flexibleMessageBoxForm.button2.Visible = true;
-                        flexibleMessageBoxForm.button2.Text = flexibleMessageBoxForm.GetButtonText(ButtonID.YES);
-                        flexibleMessageBoxForm.button2.DialogResult = DialogResult.Yes;
+                        flexibleMessageBoxForm._button2.Visible = true;
+                        flexibleMessageBoxForm._button2.Text = flexibleMessageBoxForm.GetButtonText(ButtonId.YES);
+                        flexibleMessageBoxForm._button2.DialogResult = DialogResult.Yes;
 
-                        flexibleMessageBoxForm.button3.Visible = true;
-                        flexibleMessageBoxForm.button3.Text = flexibleMessageBoxForm.GetButtonText(ButtonID.NO);
-                        flexibleMessageBoxForm.button3.DialogResult = DialogResult.No;
+                        flexibleMessageBoxForm._button3.Visible = true;
+                        flexibleMessageBoxForm._button3.Text = flexibleMessageBoxForm.GetButtonText(ButtonId.NO);
+                        flexibleMessageBoxForm._button3.DialogResult = DialogResult.No;
 
                         flexibleMessageBoxForm.ControlBox = false;
                         break;
 
                     case MessageBoxButtons.YesNoCancel:
-                        flexibleMessageBoxForm.visibleButtonsCount = 3;
+                        flexibleMessageBoxForm._visibleButtonsCount = 3;
 
-                        flexibleMessageBoxForm.button1.Visible = true;
-                        flexibleMessageBoxForm.button1.Text = flexibleMessageBoxForm.GetButtonText(ButtonID.YES);
-                        flexibleMessageBoxForm.button1.DialogResult = DialogResult.Yes;
+                        flexibleMessageBoxForm._button1.Visible = true;
+                        flexibleMessageBoxForm._button1.Text = flexibleMessageBoxForm.GetButtonText(ButtonId.YES);
+                        flexibleMessageBoxForm._button1.DialogResult = DialogResult.Yes;
 
-                        flexibleMessageBoxForm.button2.Visible = true;
-                        flexibleMessageBoxForm.button2.Text = flexibleMessageBoxForm.GetButtonText(ButtonID.NO);
-                        flexibleMessageBoxForm.button2.DialogResult = DialogResult.No;
+                        flexibleMessageBoxForm._button2.Visible = true;
+                        flexibleMessageBoxForm._button2.Text = flexibleMessageBoxForm.GetButtonText(ButtonId.NO);
+                        flexibleMessageBoxForm._button2.DialogResult = DialogResult.No;
 
-                        flexibleMessageBoxForm.button3.Visible = true;
-                        flexibleMessageBoxForm.button3.Text = flexibleMessageBoxForm.GetButtonText(ButtonID.CANCEL);
-                        flexibleMessageBoxForm.button3.DialogResult = DialogResult.Cancel;
+                        flexibleMessageBoxForm._button3.Visible = true;
+                        flexibleMessageBoxForm._button3.Text = flexibleMessageBoxForm.GetButtonText(ButtonId.CANCEL);
+                        flexibleMessageBoxForm._button3.DialogResult = DialogResult.Cancel;
 
-                        flexibleMessageBoxForm.CancelButton = flexibleMessageBoxForm.button3;
+                        flexibleMessageBoxForm.CancelButton = flexibleMessageBoxForm._button3;
                         break;
 
                     case MessageBoxButtons.OK:
                     default:
-                        flexibleMessageBoxForm.visibleButtonsCount = 1;
-                        flexibleMessageBoxForm.button3.Visible = true;
-                        flexibleMessageBoxForm.button3.Text = flexibleMessageBoxForm.GetButtonText(ButtonID.OK);
-                        flexibleMessageBoxForm.button3.DialogResult = DialogResult.OK;
+                        flexibleMessageBoxForm._visibleButtonsCount = 1;
+                        flexibleMessageBoxForm._button3.Visible = true;
+                        flexibleMessageBoxForm._button3.Text = flexibleMessageBoxForm.GetButtonText(ButtonId.OK);
+                        flexibleMessageBoxForm._button3.DialogResult = DialogResult.OK;
 
-                        flexibleMessageBoxForm.CancelButton = flexibleMessageBoxForm.button3;
+                        flexibleMessageBoxForm.CancelButton = flexibleMessageBoxForm._button3;
                         break;
                 }
 
                 //Set default button (used in FlexibleMessageBoxForm_Shown)
-                flexibleMessageBoxForm.defaultButton = defaultButton;
+                flexibleMessageBoxForm._defaultButton = defaultButton;
             }
             #endregion
 
@@ -628,14 +631,13 @@ namespace tikitwo_steam_cleaner.Flex
             /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
             private void FlexibleMessageBoxForm_Shown(object sender, EventArgs e)
             {
-                var buttonIndexToFocus = 1;
+                int buttonIndexToFocus;
                 Button buttonToFocus;
 
                 //Set the default button...
-                switch(defaultButton)
+                switch(_defaultButton)
                 {
                     case MessageBoxDefaultButton.Button1:
-                    default:
                         buttonIndexToFocus = 1;
                         break;
                     case MessageBoxDefaultButton.Button2:
@@ -644,48 +646,43 @@ namespace tikitwo_steam_cleaner.Flex
                     case MessageBoxDefaultButton.Button3:
                         buttonIndexToFocus = 3;
                         break;
+                    default:
+                        buttonIndexToFocus = 1;
+                        break;
                 }
 
-                if(buttonIndexToFocus > visibleButtonsCount)
+                if(buttonIndexToFocus > _visibleButtonsCount)
                 {
-                    buttonIndexToFocus = visibleButtonsCount;
+                    buttonIndexToFocus = _visibleButtonsCount;
                 }
 
-                if(buttonIndexToFocus == 3)
+                switch (buttonIndexToFocus)
                 {
-                    buttonToFocus = button3;
-                }
-                else
-                {
-                    if(buttonIndexToFocus == 2)
-                    {
-                        buttonToFocus = button2;
-                    }
-                    else
-                    {
-                        buttonToFocus = button1;
-                    }
+                    case 3:
+                        buttonToFocus = _button3;
+                        break;
+                    case 2:
+                        buttonToFocus = _button2;
+                        break;
+                    default:
+                        buttonToFocus = _button1;
+                        break;
                 }
 
                 buttonToFocus.Focus();
             }
 
             /// <summary>
-            ///     Handles the LinkClicked event of the richTextBoxMessage control.
+            ///     Handles the LinkClicked event of the _richTextBoxMessage control.
             /// </summary>
             /// <param name="sender">The source of the event.</param>
             /// <param name="e">The <see cref="System.Windows.Forms.LinkClickedEventArgs" /> instance containing the event data.</param>
-            private void richTextBoxMessage_LinkClicked(object sender, LinkClickedEventArgs e)
+            private void RichTextBoxMessage_LinkClicked(object sender, LinkClickedEventArgs e)
             {
                 try
                 {
                     Cursor.Current = Cursors.WaitCursor;
                     Process.Start(e.LinkText);
-                }
-                catch(Exception)
-                {
-                    //Let the caller of FlexibleMessageBoxForm decide what to do with this exception...
-                    throw;
                 }
                 finally
                 {
@@ -694,7 +691,7 @@ namespace tikitwo_steam_cleaner.Flex
             }
 
             /// <summary>
-            ///     Handles the KeyUp event of the richTextBoxMessage control.
+            ///     Handles the KeyUp event of the _richTextBoxMessage control.
             /// </summary>
             /// <param name="sender">The source of the event.</param>
             /// <param name="e">The <see cref="System.Windows.Forms.KeyEventArgs" /> instance containing the event data.</param>
@@ -703,14 +700,14 @@ namespace tikitwo_steam_cleaner.Flex
                 //Handle standard key strikes for clipboard copy: "Ctrl + C" and "Ctrl + Insert"
                 if(e.Control && (e.KeyCode == Keys.C || e.KeyCode == Keys.Insert))
                 {
-                    var buttonsTextLine = (button1.Visible ? button1.Text + STANDARD_MESSAGEBOX_SEPARATOR_SPACES : string.Empty) +
-                                          (button2.Visible ? button2.Text + STANDARD_MESSAGEBOX_SEPARATOR_SPACES : string.Empty) +
-                                          (button3.Visible ? button3.Text + STANDARD_MESSAGEBOX_SEPARATOR_SPACES : string.Empty);
+                    var buttonsTextLine = (_button1.Visible ? _button1.Text + StandardMessageboxSeparatorSpaces : string.Empty) +
+                                          (_button2.Visible ? _button2.Text + StandardMessageboxSeparatorSpaces : string.Empty) +
+                                          (_button3.Visible ? _button3.Text + StandardMessageboxSeparatorSpaces : string.Empty);
 
                     //Build same clipboard text like the standard .Net MessageBox
-                    var textForClipboard = STANDARD_MESSAGEBOX_SEPARATOR_LINES + Text + Environment.NewLine + STANDARD_MESSAGEBOX_SEPARATOR_LINES +
-                                           richTextBoxMessage.Text + Environment.NewLine + STANDARD_MESSAGEBOX_SEPARATOR_LINES +
-                                           buttonsTextLine.Replace("&", string.Empty) + Environment.NewLine + STANDARD_MESSAGEBOX_SEPARATOR_LINES;
+                    var textForClipboard = StandardMessageboxSeparatorLines + Text + Environment.NewLine + StandardMessageboxSeparatorLines +
+                                           _richTextBoxMessage.Text + Environment.NewLine + StandardMessageboxSeparatorLines +
+                                           buttonsTextLine.Replace("&", string.Empty) + Environment.NewLine + StandardMessageboxSeparatorLines;
 
                     //Set text in clipboard
                     Clipboard.SetText(textForClipboard);
@@ -742,7 +739,7 @@ namespace tikitwo_steam_cleaner.Flex
         ///     1.0 means:  The FlexibleMessageBox can be as wide as the working area.
         ///     Default is: 70% of the working area width.
         /// </summary>
-        public static double MAX_WIDTH_FACTOR = 0.7;
+        public static double MaxWidthFactor = 0.7;
 
         /// <summary>
         ///     Defines the maximum height for all FlexibleMessageBox instances in percent of the working area.
@@ -751,13 +748,13 @@ namespace tikitwo_steam_cleaner.Flex
         ///     1.0 means:  The FlexibleMessageBox can be as high as the working area.
         ///     Default is: 90% of the working area height.
         /// </summary>
-        public static double MAX_HEIGHT_FACTOR = 0.9;
+        public static double MaxHeightFactor = 0.9;
 
         /// <summary>
         ///     Defines the font for all FlexibleMessageBox instances.
         ///     Default is: SystemFonts.MessageBoxFont
         /// </summary>
-        public static Font FONT = SystemFonts.MessageBoxFont;
+        public static Font Font = SystemFonts.MessageBoxFont;
         #endregion
 
         #region Public show functions

@@ -115,6 +115,10 @@
       <Project>{64E9BF93-0415-4C67-96D2-5430E9AB304D}</Project>
       <Name>tikitwo-steam-cleaner.Application</Name>
     </ProjectReference>
+    <ProjectReference Include="..\tikitwo-steam-cleaner.Flex\tikitwo-steam-cleaner.Flex.csproj">
+      <Project>{5d996f2f-881d-486e-ae79-f20675333a62}</Project>
+      <Name>tikitwo-steam-cleaner.Flex</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
