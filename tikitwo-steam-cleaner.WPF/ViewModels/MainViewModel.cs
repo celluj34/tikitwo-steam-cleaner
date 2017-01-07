@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
 using Prism.Commands;
 using Prism.Mvvm;
 using tikitwo_steam_cleaner.Application.Models;
 using tikitwo_steam_cleaner.Application.Services;
+using tikitwo_steam_cleaner.Flex;
 
 namespace tikitwo_steam_cleaner.WPF.ViewModels
 {
@@ -81,7 +82,7 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
 
         private void AddFolderToDisplay(string newFolder)
         {
-            if(newFolder == null || FoldersToSearch.Contains(newFolder))
+            if((newFolder == null) || FoldersToSearch.Contains(newFolder))
             {
                 return;
             }
@@ -148,7 +149,7 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
 
         private bool CanRemoveFolder()
         {
-            return CanUseControls && FoldersToSearch.Any() && SelectedFolder != null;
+            return CanUseControls && FoldersToSearch.Any() && (SelectedFolder != null);
         }
         #endregion
 
@@ -194,7 +195,7 @@ namespace tikitwo_steam_cleaner.WPF.ViewModels
 
                 var size = _sizeService.GetDisplaySize(totalSaved);
 
-                MessageBox.Show("You saved " + size + "!");
+                FlexibleMessageBox.Show("You saved " + size + "!");
             });
         }
 
